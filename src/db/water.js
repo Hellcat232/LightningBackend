@@ -1,14 +1,12 @@
-import { Schema, model } from 'mongoose';
+import { model, Schema } from 'mongoose';
+import { localDate, localTime } from '../services/water.js';
 
-const createWaterSchema = new Schema(
+const waterSchema = new Schema(
   {
-    value_water: {
-      type: String,
-      default: 250,
-    },
-    recording_time: {
-      type: String,
-    },
+    localMonth: { type: String },
+    localDate: { type: String, default: () => localDate() },
+    localTime: { type: String, default: () => localTime() },
+    waterValue: { type: Number, required: [true, 'waterValue is required'] },
   },
   {
     timestamps: true,
@@ -16,4 +14,4 @@ const createWaterSchema = new Schema(
   },
 );
 
-export const Water = model('water', createWaterSchema);
+export const Water = model('Water', waterSchema);

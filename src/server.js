@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
-import waterRouter from './routers/water.js';
+import { router as waterRouter } from './routers/water.js';
 
 dotenv.config();
 
@@ -27,7 +27,7 @@ export const startServer = () => {
     }),
   );
 
-  app.use('/water', waterRouter);
+ app.use(`/water`, waterRouter);
 
   app.get('/', (req, res) => {
     res.json({
