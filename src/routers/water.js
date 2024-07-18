@@ -1,21 +1,20 @@
 import { Router } from 'express';
 
-import { ctrlWrapper } from '../utils/ctrlWrapper.js';
-import {
-  getWaterController,
-  changeWaterValueController,
-  deleteWaterValueController,
-  createWaterController,
-} from '../controllers/water.js';
+import { addWaterController, getDayWaterController, getMonthWaterController, updateWaterController, deleteWaterController } from '../controllers/water.js';
+import { checkAllWaterDataMiddleware, checkWaterDataMiddleware, checkIdMiddleware } from '../middlewares/waterMiddleware.js';
 
 const router = Router();
 
-router.get('/', ctrlWrapper(getWaterController));
+router.post('/day', checkWaterDataMiddleware, addWaterController);
 
-router.post('/', ctrlWrapper(createWaterController));
+router.use('/day/:id', checkIdMiddleware);
+router
+  .route('/day/:id')
+  .put(checkWaterDataMiddleware, updateWaterController)
+  .patch(checkWaterDataMiddleware, updateWaterController)
+  .delete(deleteWaterController);
 
-router.patch('/:waterId', ctrlWrapper(changeWaterValueController));
+router.post('/fullDay', checkAllWaterDataMiddleware, getDayWaterController);
+router.post('/fullMonth', checkAllWaterDataMiddleware, getMonthWaterController);
 
-router.delete('/:waterId', ctrlWrapper(deleteWaterValueController));
-
-export default router;
+export { router };
