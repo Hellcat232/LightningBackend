@@ -12,6 +12,8 @@ export const checkWaterDataMiddleware = (req, res, next) => {
     const { value, err } = checkWaterValidator(req.body);
     if (err) throw HttpError(400, 'Bad Request', err);
 
+    console.log(value);
+
     if (value.localDate) {
       const localDate = dateNormalizer(value.localDate);
       req.body = { ...value, localDate };
@@ -35,7 +37,8 @@ export const checkIdMiddleware = async (req, res, next) => {
 
     const waterRecord = await getWaterRecordIdService(id);
 
-    if (!waterRecord) throw HttpError(404, 'Not Found');
+    if (!waterRecord || waterRecord.owner.toString() !== req.user.id)
+      throw HttpError(404, 'Not Found');
 
     req.water = waterRecord;
 

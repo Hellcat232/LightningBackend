@@ -1,47 +1,81 @@
-import bcrypt from 'bcrypt';
-import { randomBytes } from 'crypto';
-import { UserCollection } from '../db/user.js';
-import createHttpError from 'http-errors';
-import { FIFTEEN_MINUTES, ONE_DAY } from '../constants/dateRegex.js';
-import { SessionCollection } from '../db/session.js';
+import { User } from '../db/user.js';
+import { HttpError } from '../utils/HttpError.js';
+import { signToken } from './jwtServices.js';
 
-export const registerUser = async (userData) => {
-  const user = await UserCollection.findOne({ email: userData.email });
 
-  if (user) {
-    throw createHttpError(409, 'Email in use');
-  }
-
-  const encryptedPassword = await bcrypt.hash(userData.password, 10);
-  return await UserCollection.create({
-    ...userData,
-    password: encryptedPassword,
-  });
+export const checkUserExistsService = (filter) => {
+  return User.exists(filter);
 };
 
-export const loginUser = async (userData) => {
-  const user = await UserCollection.findOne({ email: userData.email });
+
+export const registerUser = async (userData) => {
+  const email = userData.email;
+
+  let name = email.split('@')[0];
+
+  name = name.charAt(0).toUpperCase() + name.slice(1);
+
+  userData.name = name;
+
+  const newUser = await User.create(userData);
+
+  return { newUser };
+};
+
+
+export const loginUserService = async ({ email, password }) => {
+  const user = await User.findOne({ email });
+
+  if (!user) throw HttpError(401, 'Email or password is wrong');
+
+  const passwordIsValid = await user.checkUserPassword(password, user.password);
+
+  if (!passwordIsValid) throw HttpError(401, 'Email or password is wrong');
+
+  const accessToken = signToken(
+    user.id,
+    process.env.ACCESS_SECRET_KEY,
+    process.env.ACCESS_EXPIRES_IN,
+  );
+
+  const refreshToken = signToken(
+    user.id,
+    process.env.REFRESH_SECRET_KEY,
+    process.env.REFRESH_EXPIRES_IN,
+  );
+
+  user.accessToken = accessToken;
+  user.refreshToken = refreshToken;
+  await user.save();
+
+  return { user, accessToken, refreshToken };
+};
+
+
+export const getUserByIdService = (id) => {
+  return User.findById(id);
+};
+
+
+export const logoutUserService = async (userId) => {
+  const user = await User.findById(userId);
 
   if (!user) {
-    throw createHttpError(404, 'User not found');
+    throw HttpError(401, 'Unauthorized');
   }
 
-  const isSamePass = await bcrypt.compare(userData.password, user.password);
+  user.accessToken = null;
+  user.refreshToken = null;
 
-  if (!isSamePass) {
-    throw createHttpError(401, 'Unauthorizade');
-  }
+  await user.save();
+};
 
-  await SessionCollection.deleteOne({ userId: user._id });
 
-  const accessToken = randomBytes(30).toString('base64');
-  const refreshToken = randomBytes(30).toString('base64');
+export const updateUserService = async (userData, user) => {
 
-  return await SessionCollection.create({
-    userId: user._id,
-    accessToken,
-    refreshToken,
-    accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
-    refreshTokenValidUntil: new Date(Date.now() + ONE_DAY),
+  Object.keys(userData).forEach((key) => {
+    user[key] = userData[key];
   });
+
+  return user.save();
 };

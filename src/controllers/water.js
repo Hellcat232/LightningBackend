@@ -1,13 +1,16 @@
-import { addWaterService } from '../services/water.js';
-import { getDayWaterService } from '../services/water.js';
-import { getMonthWaterService } from '../services/water.js';
-import { updateWaterRecordIdService } from '../services/water.js';
-import { deleteWaterRecordIdService } from '../services/water.js';
+import {
+  addWaterService,
+  getDayWaterService,
+  getMonthWaterService,
+  getWeekWaterService, 
+  updateWaterRecordIdService,
+  deleteWaterRecordIdService,
+} from '../services/water.js';
 
 export const addWaterController = async (req, res, next) => {
   try {
-    console.log('Request Body:', req.body);
-    const waterRecord = await addWaterService(req.body);
+    console.log(req.body);
+    const waterRecord = await addWaterService(req.body, req.user._id);
 
     res.status(201).json({
       msg: 'CREATED!',
@@ -17,10 +20,10 @@ export const addWaterController = async (req, res, next) => {
         localDate: waterRecord.localDate,
         localTime: waterRecord.localTime,
         waterValue: waterRecord.waterValue,
+        owner: waterRecord.owner,
       },
     });
   } catch (e) {
-    console.error('Error in addWaterController:', e);
     next(e);
   }
 };
@@ -37,6 +40,7 @@ export const deleteWaterController = async (req, res, next) => {
         localDate: waterRecord.localDate,
         localTime: waterRecord.localTime,
         waterValue: waterRecord.waterValue,
+        owner: waterRecord.owner,
       },
     });
   } catch (e) {
@@ -51,7 +55,7 @@ export const updateWaterController = async (req, res, next) => {
       req.body,
     );
 
-    res.status(201).json({
+    res.status(200).json({
       msg: 'UPDATED!',
       waterRecord: {
         _id: waterRecord.id,
@@ -59,6 +63,7 @@ export const updateWaterController = async (req, res, next) => {
         localDate: waterRecord.localDate,
         localTime: waterRecord.localTime,
         waterValue: waterRecord.waterValue,
+        owner: waterRecord.owner,
       },
     });
   } catch (e) {
@@ -70,6 +75,7 @@ export const getDayWaterController = async (req, res, next) => {
   try {
     const { allWaterRecord, feasibility, completed } = await getDayWaterService(
       req.body,
+      req.user._id,
     );
 
     res.status(200).json({
@@ -87,13 +93,34 @@ export const getDayWaterController = async (req, res, next) => {
 
 export const getMonthWaterController = async (req, res, next) => {
   try {
-    const allWaterRecord = await getMonthWaterService(req.body);
+    const allWaterRecord = await getMonthWaterService(req.body, req.user._id);
 
     res.status(200).json({
       msg: 'GETED!',
       waterRecord: allWaterRecord,
     });
   } catch (e) {
+    next(e);
+  }
+};
+
+export const getWeekWaterController = async (req, res, next) => {
+  try {
+    console.log('Request Body:', req.body);
+
+    if (!req.body.localDate) {
+      throw new Error('localDate is required in request body');
+    }
+
+    const waterRecords = await getWeekWaterService(req.body, req.user);
+    console.log('Water Records:', waterRecords);
+
+    res.status(200).json({
+      msg: 'GETED!',
+      waterRecords,
+    });
+  } catch (e) {
+    console.error('Error in getWeekWaterController:', e);
     next(e);
   }
 };

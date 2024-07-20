@@ -13,6 +13,3 @@ export const TIME_REGEX = '^([0-1]?[0-9]|[2][0-3]):([0-5][0-9])(:[0-5][0-9])?$';
  */
 export const DATE_REGEX =
   '^(0[1-9]|[12][0-9]|3[01]).(0[1-9]|1[012]).(19[7-9][0-9]|20[0-6][0-9]|2070)$';
-
-export const FIFTEEN_MINUTES = 15 * 60 * 1000;
-export const ONE_DAY = 24 * 60 * 60 * 1000;

@@ -1,36 +1,53 @@
-import { Schema, model } from 'mongoose';
+import { model, Schema } from 'mongoose';
+import bcrypt from 'bcrypt';
 
-const userSchema = new Schema(
+import { userGender } from '../constants/userGender.js';
+
+const userSchema = Schema(
   {
-    name: {
-      type: String,
-      default: 'Anonymous',
-    },
+    //
     email: {
       type: String,
-      requred: true,
+      required: [true, 'Email is required'],
       unique: true,
     },
     password: {
       type: String,
-      requred: true,
+      required: [true, 'Password is required'],
+    },
+    accessToken: {
+      type: String,
+      default: null,
+    },
+    refreshToken: {
+      type: String,
+      default: null,
+    },
+
+    //
+    name: {
+      type: String,
     },
     gender: {
       type: String,
-      enum: ['woman', 'man'],
-      default: 'woman',
+      enum: Object.values(userGender),
+      default: null,
+    },
+    avatar: {
+      type: String,
+      default: null,
     },
     weight: {
       type: String,
+      default: null,
     },
-    time_of_active: {
+    sportsActivity: {
       type: String,
+      default: null,
     },
-    desired_quantity_of_water: {
+    waterRate: {
       type: String,
-    },
-    photo: {
-      type: String,
+      default: '1.5',
     },
   },
   {
@@ -39,10 +56,16 @@ const userSchema = new Schema(
   },
 );
 
-userSchema.methods.toJSON = function () {
-  const obj = this.toObject();
-  delete obj.password;
-  return obj;
-};
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
 
-export const UserCollection = model('user', userSchema);
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+
+  next();
+});
+
+userSchema.methods.checkUserPassword = (candidate, passwordHash) =>
+  bcrypt.compare(candidate, passwordHash);
+
+export const User = model('User', userSchema);
