@@ -1,14 +1,16 @@
 import { HttpError } from 'http-errors';
 
 export const errorHandler = (err, req, res, next) => {
+  console.error('Unhandled Error:', err); 
+
   if (err instanceof HttpError) {
-    res.status(err.status).json({
+    return res.status(err.status).json({
       status: err.status,
-      message: err.name,
-      data: err,
+      message: err.message || 'An error occurred',
+
     });
-    return;
   }
+
   res.status(500).json({
     message: 'Something went wrong',
     error: err.message,
