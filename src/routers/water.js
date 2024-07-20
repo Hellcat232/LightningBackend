@@ -5,7 +5,6 @@ import {
   getMonthWaterController,
   updateWaterController,
   deleteWaterController,
-  getWeekWaterController,
 } from '../controllers/water.js';
 import {
   checkAllWaterDataMiddleware,
@@ -34,5 +33,4 @@ waterRouter.post(
   checkAllWaterDataMiddleware,
   getMonthWaterController,
 );
-waterRouter.post('/week', getWeekWaterController,);
 export default waterRouter;
