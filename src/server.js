@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import router from './routers/index.js';
+import { UPLOAD_DIR } from './constants/avatar.js';
 
 dotenv.config();
 
@@ -26,6 +27,8 @@ export const startServer = () => {
       },
     }),
   );
+
+  app.use('/uploads', express.static(UPLOAD_DIR));
 
   app.use(router);
 

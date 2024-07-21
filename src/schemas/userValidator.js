@@ -26,12 +26,13 @@ export const updateUserValidator = joiValidator((data) =>
   Joi.object()
     .options({ abortEarly: false })
     .keys({
-      name: Joi.string().min(2).max(30),
+      name: Joi.string().min(2).max(30).allow('').optional(),
       email: Joi.string().email(),
-      gender: Joi.string().valid(...Object.values(userGender)),
-      weight: Joi.string(),
-      sportsActivity: Joi.string(),
-      waterRate: Joi.string(),
+      gender: Joi.string().valid(...Object.values(userGender)).optional(),
+      weight: Joi.string().allow('').optional(),
+      sportsActivity: Joi.string().allow('').optional(),
+      waterRate: Joi.string().allow('').optional(),
+      avatar: Joi.string().allow('').optional(),
     })
     .validate(data),
 );

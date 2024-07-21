@@ -5,6 +5,11 @@ import {
   updateUserService,
 } from '../services/user.js';
 import { catchAsync } from '../utils/catchAsync.js';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { env } from '../utils/env.js';
+import { HttpError } from '../utils/HttpError.js';
+
 
 export const createUser = catchAsync(async (req, res) => {
   const { newUser } = await registerUser(req.body);
@@ -54,23 +59,32 @@ export const currentUser = (req, res) => {
   });
 };
 
-export const updateUser = catchAsync(async (req, res) => {
-  const updatedUser = await updateUserService(
-    req.body,
-    req.user,
-    req.file,
-    req.userId,
-  );
-  res.status(200).json({
-    avatarUrl: updatedUser.avatar,
-    name: updatedUser.name,
-    gender: updatedUser.gender,
-    email: updatedUser.email,
-    weight: updatedUser.weight,
-    sportsActivity: updatedUser.sportsActivity,
-    waterRate: updatedUser.waterRate,
+export const updateUser = async ( req, res ) => {
+  const avatar = req.file;
+
+  let avatarUrl;
+
+  if (avatar) {
+      if (env('ENABLE_CLOUDINARY') === 'true') {
+          avatarUrl = await saveFileToCloudinary(avatar);
+      } else {
+          avatarUrl = await saveFileToUploadDir(avatar);
+      }
+  }
+  const result = await updateUserService(req.user._id, {
+    ...req.body,
+    avatar: avatarUrl,
   });
-});
+
+  if(!result) {
+    throw HttpError(404, "User not found");
+  }
+
+  res.status(200).json({
+    message: "Successfully updated user!",
+    data: result.user,
+  });
+};
 
 export const refreshUser = (req, res) => {
   const { refreshToken, accessToken, currentUserRef } = req;
