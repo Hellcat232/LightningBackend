@@ -15,6 +15,7 @@ export const checkToken = (token, key) => {
 
     return id;
   } catch (err) {
+    console.log(err);
     throw HttpError(401, 'Unauthorized');
   }
 };

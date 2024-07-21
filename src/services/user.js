@@ -71,11 +71,22 @@ export const logoutUserService = async (userId) => {
 };
 
 
-export const updateUserService = async (userData, user) => {
-
-  Object.keys(userData).forEach((key) => {
-    user[key] = userData[key];
-  });
-
-  return user.save();
+export const updateUserService = async ( userId, payload, options = {} ) => {
+  Object.keys(payload).forEach(key => (payload[key] === undefined || payload[key] === '') && delete payload[key]);
+  const rawResult = await User.findOneAndUpdate(
+      { _id: userId },
+      payload,
+      {
+          new: true,
+          includeResultMetadata: true,
+          ...options,
+      },
+  );
+  
+  if (!rawResult || !rawResult.value) return null;
+  
+  return {
+      user: rawResult.value,
+      isNew: Boolean(rawResult?.lastErrorObject?.upserted),
+  };
 };
