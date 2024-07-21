@@ -21,9 +21,9 @@ const usersRouter = Router();
 
 usersRouter.post('/register', checkCreateUserData, createUser);
 usersRouter.post('/login', checkLogInData, loginUser);
-usersRouter.get('/logout', protect, logoutUser);
+usersRouter.post('/logout', protect, logoutUser);
 usersRouter.post('/refresh', checkRefreshData, refreshUserData, refreshUser);
 usersRouter.get('/current', protect, currentUser);
-usersRouter.put('/update', upload.single('avatar'), protect, checkUpdateUserData, updateUser);
+usersRouter.patch('/update', upload.single('avatar'), protect, checkUpdateUserData, updateUser);
 
 export default usersRouter;
