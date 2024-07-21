@@ -1,0 +1,24 @@
+tags:
+  - User
+summary: Get current user
+operationId: getCurrentUser
+description: "Get details of the currently authenticated user"
+security:
+  - bearerAuth: []
+responses:
+  '200':
+    description: Successful operation
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - user
+          properties:
+            user:
+              type: object
+              $ref: ../../../components/schemas/user.yaml
+  '401':
+    description: Unauthorized error
+  '500':
+    description: Internal server error

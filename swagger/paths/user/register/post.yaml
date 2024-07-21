@@ -1,0 +1,46 @@
+tags:
+  - User
+summary: Register user
+operationId: registerUser
+description: "Register user with this endpoint"
+security: 
+  - bearerAuth: []
+requestBody: 
+  content: 
+    application/json:
+      schema:
+        type: object
+        properties:
+          name: 
+            type: string
+            example: Jon Doe
+          email:
+            type: string
+            format: email
+            example: userExample@gmail.com
+          password:
+            type: string
+            example: f12345678
+responses:
+  '201':
+    description: Successfully created user!
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - user
+          properties:
+              status:
+                type: integer
+                example: 201
+              user: 
+                type: object
+                properties:
+                  email:
+                    type: string
+                    format: email
+                    example: userExample@gmail.com
+  '400':
+    description: Invalid request body

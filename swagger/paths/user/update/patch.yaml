@@ -1,0 +1,58 @@
+tags:
+  - User
+summary: Update user information
+operationId: updateUser
+description: "Update user with this endpoint"
+security: 
+  - bearerAuth: []
+requestBody: 
+  content: 
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+            example: John Doe
+          email:
+            type: string
+            format: email
+            example: userExample@gmail.com
+          gender:
+            type: string
+            enum:
+              - Male
+              - Female
+            example: Male
+          avatar:
+            type: string
+            format: binary
+          weight:
+            type: string
+            example: "70"
+          sportsActivity:
+            type: string
+          waterRate:
+            type: string
+            example: "1.5"
+responses:
+  '200':
+    description: Successful update operation!
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - user
+          properties:
+              status:
+                type: integer
+                example: 200
+              user: 
+                type: object
+                $ref: ../../../components/schemas/user.yaml
+  '400':
+    description: Invalid request body
+  '401':
+    description: Unauthorized error
