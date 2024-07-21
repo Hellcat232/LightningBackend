@@ -7,6 +7,7 @@ import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import router from './routers/index.js';
 import { UPLOAD_DIR } from './constants/avatar.js';
+import { swaggerDocs } from './middlewares/swaggerDocs.js';
 
 dotenv.config();
 
@@ -31,6 +32,8 @@ export const startServer = () => {
   app.use('/uploads', express.static(UPLOAD_DIR));
 
   app.use(router);
+
+  app.use('/api-docs', swaggerDocs());
 
   app.get('/', (req, res) => {
     res.json({

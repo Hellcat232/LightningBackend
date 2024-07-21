@@ -1,0 +1,49 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: Water tracker app
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: >
+    This is a documentation of water tracker app
+tags:
+  - name: User
+    description: Operations about users.
+  - name: Water
+    description: Water operations.
+servers:
+  # - url: http://localhost:3000
+    #   description: Local development server
+  - url: https://lightningbackend.onrender.com
+paths:
+  /user/login:
+    post:
+      $ref: ../swagger/paths/user/login/post.yaml
+
+  /user/current:
+    get: 
+      $ref: ../swagger/paths/user/current/get.yaml
+
+  /user/logout:
+    post: 
+      $ref: ../swagger/paths/user/logout/post.yaml
+
+  /user/refresh:
+    post: 
+      $ref: ../swagger/paths/user/refresh/post.yaml
+
+  /user/register:
+    post: 
+      $ref: ../swagger/paths/user/register/post.yaml
+
+  /user/update:
+    patch: 
+      $ref: ../swagger/paths/user/update/patch.yaml
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

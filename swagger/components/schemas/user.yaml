@@ -1,0 +1,28 @@
+type: object
+required: 
+  - name
+  - email
+properties:
+  name:
+    type: string
+    example: John Doe
+  email:
+    type: string
+    format: email
+    example: userExample@gmail.com
+  gender:
+    type: string
+    enum:
+      - Male
+      - Female
+    example: Male
+  avatar:
+    type: string
+  weight:
+    type: string
+    example: "70"
+  sportsActivity:
+    type: string
+  waterRate:
+    type: string
+    example: "1.5"

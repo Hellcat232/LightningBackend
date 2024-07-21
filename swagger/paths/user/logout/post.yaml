@@ -1,0 +1,14 @@
+tags:
+  - User
+summary: Logout user
+operationId: logoutUser
+description: "Logout the authenticated user"
+security: 
+  - bearerAuth: []
+responses:
+  '204':
+    description: Successful logout operation
+  '401':
+    description: Unauthorized error
+  '500':
+    description: Internal server error

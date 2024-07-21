@@ -1,0 +1,47 @@
+tags:
+  - User
+summary: Login user
+operationId: loginUser
+description: "Login with this endpoint"
+security: 
+  - bearerAuth: []
+requestBody: 
+  content: 
+    application/json:
+      schema:
+        type: object
+        properties:
+          email:
+            type: string
+            format: email
+            example: userExample@gmail.com
+          password:
+            type: string
+            example: f12345678
+responses:
+  '200':
+    description: Successful Login operation!
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - user
+            - accessToken
+            - refreshToken
+          properties:
+              status:
+                type: integer
+                example: 200
+              user: 
+                type: object
+                $ref: ../../../components/schemas/user.yaml
+              accessToken:
+                type: string
+                example: efJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ8.eyJpZCI6IjY2OWE3NzRkMDYzYjM2ZjJhMjNmODIyYyIsImlhdCI7MTdyMTU5OTY1MCwiZXhwIjoxNzIxNjAzMjUwfQ.znG4iJzCsVkapp4v8lvKaUtNBtHZ6fbHGzIn9FIrrjg
+              refreshToken: 
+                type: string
+                example: eyJlbGciOiJIUlI1NiIsInR5cCI5IkpXVCJ1.eiJpZCI6IjD2OWD3NzRkMDYzYjM2ZjJhMjNmODIyYyIsImlhdCI7MTcyMTU5OTY1MCwiZXhwIjoxNzIyMjA0NDUwfQ.BtRjmgAKA8PHKL6acanHmjKYTVVgiwAFcB6P0QZj0Yo
+  '400':
+    description: Invalid request body

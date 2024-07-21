@@ -24,8 +24,8 @@ export const loginUser = catchAsync(async (req, res) => {
 
   res.status(200).json({
     user: {
-      email: user.email,
       name: user.name,
+      email: user.email,
       gender: user.gender,
       avatar: user.avatar,
       weight: user.weight,
@@ -49,13 +49,15 @@ export const currentUser = (req, res) => {
   const currentUser = req.user;
 
   res.status(200).json({
-    email: currentUser.email,
-    name: currentUser.name,
-    gender: currentUser.gender,
-    avatarURL: currentUser.avatar,
-    weight: currentUser.weight,
-    sportsActivity: currentUser.sportsActivity,
-    waterRate: currentUser.waterRate,
+    user: {
+      name: currentUser.name,
+      email: currentUser.email,
+      gender: currentUser.gender,
+      avatar: currentUser.avatar,
+      weight: currentUser.weight,
+      sportsActivity: currentUser.sportsActivity,
+      waterRate: currentUser.waterRate,
+    }
   });
 };
 
@@ -81,8 +83,15 @@ export const updateUser = async ( req, res ) => {
   }
 
   res.status(200).json({
-    message: "Successfully updated user!",
-    data: result.user,
+    user: {
+      name: result.user.name,
+      email: result.user.email,
+      gender: result.user.gender,
+      avatar: result.user.avatar,
+      weight: result.user.weight,
+      sportsActivity: result.user.sportsActivity,
+      waterRate: result.user.waterRate,
+    }
   });
 };
 
@@ -93,10 +102,10 @@ export const refreshUser = (req, res) => {
     accessToken,
     refreshToken,
     user: {
-      avatarUrl: currentUserRef.avatar,
       name: currentUserRef.name,
-      gender: currentUserRef.gender,
       email: currentUserRef.email,
+      gender: currentUserRef.gender,
+      avatar: currentUserRef.avatar,
       weight: currentUserRef.weight,
       sportsActivity: currentUserRef.sportsActivity,
       waterRate: currentUserRef.waterRate,
