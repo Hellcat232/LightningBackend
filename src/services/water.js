@@ -101,3 +101,34 @@ export const getMonthWaterService = async (date, owner) => {
 
   return sortedResult;
 };
+
+export const getMonthWaterServiceForFront = async (date, owner) => {
+  const allWaterRecord = await Water.find({
+    owner: owner.id,
+    localMonth: date.localDate.slice(3),
+  });
+
+  const result = allWaterRecord.reduce((acc, item) => {
+    let key = item.localDate;
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+    acc[key].push(item);
+    return acc;
+  }, {});
+
+  const sortedKeys = Object.keys(result).sort();
+
+  const sortedResult = {};
+  for (let key of sortedKeys) {
+    sortedResult[key] = result[key].sort((a, b) => {
+      return a.localTime.localeCompare(b.localTime);
+    });
+  }
+
+  const totalWaterDrunk = allWaterRecord.reduce((sum, record) => {
+    return sum + (record.waterValue || 0);
+  }, 0);
+
+  return { sortedResult, totalWaterDrunk };
+};

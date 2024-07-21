@@ -11,6 +11,7 @@ const waterSchema = new Schema(
     localDate: { type: String, default: () => localDate() },
     localTime: { type: String, default: () => localTime() },
     waterValue: { type: Number, required: [true, 'waterValue is required'] },
+    totalWaterDrunk: { type: Number },
   },
   {
     timestamps: true,
