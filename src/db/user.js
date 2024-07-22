@@ -5,7 +5,10 @@ import { userGender } from '../constants/userGender.js';
 
 const userSchema = Schema(
   {
-    //
+    googleId: {
+      type: String,
+      unique: true,
+    },
     email: {
       type: String,
       required: [true, 'Email is required'],
@@ -13,7 +16,6 @@ const userSchema = Schema(
     },
     password: {
       type: String,
-      required: [true, 'Password is required'],
     },
     accessToken: {
       type: String,
@@ -23,8 +25,6 @@ const userSchema = Schema(
       type: String,
       default: null,
     },
-
-    //
     name: {
       type: String,
     },
