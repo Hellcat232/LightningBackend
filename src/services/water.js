@@ -115,6 +115,7 @@ export const getMonthWaterServiceForFront = async (date, owner) => {
     localMonth: date.localDate.slice(3),
   });
 
+  // Группировка данных по дате
   const result = allWaterRecord.reduce((acc, item) => {
     let key = item.localDate;
     if (!acc[key]) {
@@ -124,8 +125,8 @@ export const getMonthWaterServiceForFront = async (date, owner) => {
     return acc;
   }, {});
 
+  // Сортировка по дате и времени
   const sortedKeys = Object.keys(result).sort();
-
   const sortedResult = {};
   for (let key of sortedKeys) {
     sortedResult[key] = result[key].sort((a, b) => {
@@ -133,9 +134,26 @@ export const getMonthWaterServiceForFront = async (date, owner) => {
     });
   }
 
+  // Вычисление общего количества воды за месяц
   const totalWaterDrunk = allWaterRecord.reduce((sum, record) => {
     return sum + (record.waterValue || 0);
   }, 0);
 
-  return { sortedResult, totalWaterDrunk };
+  // Вычисление общего количества воды по дате
+  const dailyTotals = Object.entries(sortedResult).reduce(
+    (acc, [date, records]) => {
+      const dailyTotal = records.reduce(
+        (sum, record) => sum + (record.waterValue || 0),
+        0,
+      );
+      acc[date] = {
+        records,
+        dailyTotal,
+      };
+      return acc;
+    },
+    {},
+  );
+
+  return { sortedResult: dailyTotals, totalWaterDrunk };
 };
