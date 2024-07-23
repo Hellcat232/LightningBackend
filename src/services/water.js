@@ -1,11 +1,15 @@
 import mongoose from 'mongoose';
 import { Water } from '../db/water.js';
+
+// Получает текущую локальную дату в формате строки
 export const localDate = () => {
   const milliseconds = Date.now();
   const date = new Date(milliseconds);
 
   return date.toLocaleDateString();
 };
+
+// Получает текущие часы и минуты в локальном формате времени
 
 export const localTime = () => {
   const milliseconds = Date.now();
@@ -20,6 +24,8 @@ export const localTime = () => {
   return timeString;
 };
 
+// Преобразует дату в строковом формате, разделенную различными символами (/, \, ., -), в формат с точками
+
 export const dateNormalizer = (dateValue) => {
   const arr = dateValue.split(/[\\/.\-]/).join('.');
 
@@ -27,6 +33,7 @@ export const dateNormalizer = (dateValue) => {
 };
 
 //=================================================================================
+// Создает новую запись о потреблении воды в базе данных, добавляя текущий месяц (вычисленный из localDate)
 export const addWaterService = async (waterData, owner) => {
   const localMonth = waterData.localDate.slice(3);
 
@@ -34,19 +41,19 @@ export const addWaterService = async (waterData, owner) => {
 
   return waterRecord;
 };
-
+// Находит и возвращает запись о потреблении воды по идентификатору
 export const getWaterRecordIdService = async (id) => {
   const waterRecord = await Water.findById(id);
 
   return waterRecord;
 };
-
+// Удаляет запись о потреблении воды по идентификатору и возвращает удаленные данные
 export const deleteWaterRecordIdService = async (id) => {
   const waterData = await Water.findByIdAndDelete(id);
 
   return waterData;
 };
-
+// Обновляет запись о потреблении воды по идентификатору, добавляя или изменяя месяц
 export const updateWaterRecordIdService = async (id, waterData) => {
   const localMonth = waterData.localDate.slice(3);
 
@@ -58,7 +65,7 @@ export const updateWaterRecordIdService = async (id, waterData) => {
 
   return waterRecord;
 };
-
+// Получает все записи о потреблении воды за конкретный день для конкретного владельца, вычисляет общее количество воды и проверяет, достигнут ли дневной норматив
 export const getDayWaterService = async (date, owner) => {
   const allWaterRecord = await Water.find({
     owner: owner.id,
@@ -74,7 +81,7 @@ export const getDayWaterService = async (date, owner) => {
   const feasibility = (totalDay / (Number(owner.waterRate) * 1000)) * 100;
   return { allWaterRecord, feasibility, completed: false };
 };
-
+// Получает все записи о потреблении воды за месяц, группирует их по дате и сортирует по времени в пределах каждой даты
 export const getMonthWaterService = async (date, owner) => {
   const allWaterRecord = await Water.find({
     owner: owner.id,
@@ -101,7 +108,7 @@ export const getMonthWaterService = async (date, owner) => {
 
   return sortedResult;
 };
-
+// Получает все записи о потреблении воды за месяц, группирует их по дате и сортирует по времени. Дополнительно вычисляет общее количество потребленной воды за месяц и возвращает это вместе с отсортированными записями
 export const getMonthWaterServiceForFront = async (date, owner) => {
   const allWaterRecord = await Water.find({
     owner: owner.id,

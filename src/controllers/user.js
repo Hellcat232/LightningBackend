@@ -11,6 +11,7 @@ import { env } from '../utils/env.js';
 import { HttpError } from '../utils/HttpError.js';
 
 
+// Функция для создания нового пользователя
 export const createUser = catchAsync(async (req, res) => {
   const { newUser } = await registerUser(req.body);
 
@@ -19,6 +20,7 @@ export const createUser = catchAsync(async (req, res) => {
   });
 });
 
+// Функция для входа пользователя
 export const loginUser = catchAsync(async (req, res) => {
   const { user, accessToken, refreshToken } = await loginUserService(req.body);
 
@@ -37,6 +39,7 @@ export const loginUser = catchAsync(async (req, res) => {
   });
 });
 
+// Функция для выхода пользователя
 export const logoutUser = catchAsync(async (req, res) => {
   const id = req.userId;
 
@@ -45,6 +48,7 @@ export const logoutUser = catchAsync(async (req, res) => {
   res.sendStatus(204);
 });
 
+// Функция для получения текущего пользователя
 export const currentUser = (req, res) => {
   const currentUser = req.user;
 
@@ -61,7 +65,8 @@ export const currentUser = (req, res) => {
   });
 };
 
-export const updateUser = async ( req, res ) => {
+// Функция для обновления данных пользователя
+export const updateUser = async (req, res) => {
   const avatar = req.file;
 
   let avatarUrl;
@@ -95,6 +100,7 @@ export const updateUser = async ( req, res ) => {
   });
 };
 
+// Функция для обновления токенов пользователя
 export const refreshUser = (req, res) => {
   const { refreshToken, accessToken, currentUserRef } = req;
 
