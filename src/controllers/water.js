@@ -1,9 +1,13 @@
-import { addWaterService } from '../services/water.js';
-import { getDayWaterService } from '../services/water.js';
-import { getMonthWaterService } from '../services/water.js';
-import { updateWaterRecordIdService } from '../services/water.js';
-import { deleteWaterRecordIdService } from '../services//water.js';
+import {
+  getMonthWaterService,
+  addWaterService,
+  getDayWaterService,
+  updateWaterRecordIdService,
+  deleteWaterRecordIdService,
+  getMonthWaterServiceForFront,
+} from '../services/water.js';
 
+// Контроллер для добавления записи о воде
 export const addWaterController = async (req, res, next) => {
   try {
     console.log(req.body);
@@ -21,10 +25,12 @@ export const addWaterController = async (req, res, next) => {
       },
     });
   } catch (e) {
+    console.error(e);
     next(e);
   }
 };
 
+// Контроллер для удаления записи о воде
 export const deleteWaterController = async (req, res, next) => {
   try {
     const waterRecord = await deleteWaterRecordIdService(req.water.id);
@@ -45,6 +51,7 @@ export const deleteWaterController = async (req, res, next) => {
   }
 };
 
+// Контроллер для обновления записи о воде
 export const updateWaterController = async (req, res, next) => {
   try {
     const waterRecord = await updateWaterRecordIdService(
@@ -68,6 +75,7 @@ export const updateWaterController = async (req, res, next) => {
   }
 };
 
+// Контроллер для получения дневных записей о воде
 export const getDayWaterController = async (req, res, next) => {
   try {
     const { allWaterRecord, feasibility, completed } = await getDayWaterService(
@@ -88,6 +96,7 @@ export const getDayWaterController = async (req, res, next) => {
   }
 };
 
+// Контроллер для получения месячных записей о воде
 export const getMonthWaterController = async (req, res, next) => {
   try {
     const allWaterRecord = await getMonthWaterService(req.body, req.user);
@@ -95,6 +104,25 @@ export const getMonthWaterController = async (req, res, next) => {
     res.status(200).json({
       msg: 'GETED!',
       waterRecord: allWaterRecord,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+// Контроллер для получения месячных записей о воде для фронтенда
+export const getMonthWaterForFrontController = async (req, res, next) => {
+  try {
+    const owner = req.user;
+    const date = req.body;
+
+    const { sortedResult, totalWaterDrunk } =
+      await getMonthWaterServiceForFront(date, owner);
+
+    res.status(200).json({
+      msg: 'Monthly water data retrieved!',
+      waterRecord: sortedResult,
+      totalWaterDrunk,
     });
   } catch (e) {
     next(e);

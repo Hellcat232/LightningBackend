@@ -5,7 +5,10 @@ import { userGender } from '../constants/userGender.js';
 
 const userSchema = Schema(
   {
-    //
+    googleId: {
+      type: String,
+      unique: true,
+    },
     email: {
       type: String,
       required: [true, 'Email is required'],
@@ -13,7 +16,6 @@ const userSchema = Schema(
     },
     password: {
       type: String,
-      required: [true, 'Password is required'],
     },
     accessToken: {
       type: String,
@@ -23,8 +25,6 @@ const userSchema = Schema(
       type: String,
       default: null,
     },
-
-    //
     name: {
       type: String,
     },
@@ -55,17 +55,21 @@ const userSchema = Schema(
     versionKey: false,
   },
 );
-
+// Middleware для обработки перед сохранением пользователя
 userSchema.pre('save', async function (next) {
+  // Проверка, изменялся ли пароль
   if (!this.isModified('password')) return next();
 
+  // Генерация соли и хеширование пароля
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 
   next();
 });
 
+// Метод схемы для проверки пароля пользователя
 userSchema.methods.checkUserPassword = (candidate, passwordHash) =>
   bcrypt.compare(candidate, passwordHash);
 
+// Экспорт модели пользователя
 export const User = model('User', userSchema);
