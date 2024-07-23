@@ -1,12 +1,11 @@
 import { User } from '../db/user.js';
 import { HttpError } from '../utils/HttpError.js';
 import { signToken } from './jwtServices.js';
-
+// import { refreshUsersSession } from './auth.js';
 
 export const checkUserExistsService = (filter) => {
   return User.exists(filter);
 };
-
 
 export const registerUser = async (userData) => {
   const email = userData.email;
@@ -21,7 +20,6 @@ export const registerUser = async (userData) => {
 
   return { newUser };
 };
-
 
 export const loginUserService = async ({ email, password }) => {
   const user = await User.findOne({ email });
@@ -51,11 +49,9 @@ export const loginUserService = async ({ email, password }) => {
   return { user, accessToken, refreshToken };
 };
 
-
 export const getUserByIdService = (id) => {
   return User.findById(id);
 };
-
 
 export const logoutUserService = async (userId) => {
   const user = await User.findById(userId);
@@ -70,23 +66,22 @@ export const logoutUserService = async (userId) => {
   await user.save();
 };
 
-
-export const updateUserService = async ( userId, payload, options = {} ) => {
-  Object.keys(payload).forEach(key => (payload[key] === undefined || payload[key] === '') && delete payload[key]);
-  const rawResult = await User.findOneAndUpdate(
-      { _id: userId },
-      payload,
-      {
-          new: true,
-          includeResultMetadata: true,
-          ...options,
-      },
+export const updateUserService = async (userId, payload, options = {}) => {
+  Object.keys(payload).forEach(
+    (key) =>
+      (payload[key] === undefined || payload[key] === '') &&
+      delete payload[key],
   );
-  
+  const rawResult = await User.findOneAndUpdate({ _id: userId }, payload, {
+    new: true,
+    includeResultMetadata: true,
+    ...options,
+  });
+
   if (!rawResult || !rawResult.value) return null;
-  
+
   return {
-      user: rawResult.value,
-      isNew: Boolean(rawResult?.lastErrorObject?.upserted),
+    user: rawResult.value,
+    isNew: Boolean(rawResult?.lastErrorObject?.upserted),
   };
 };

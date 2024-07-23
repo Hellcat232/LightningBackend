@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import passport from 'passport';
 import session from 'express-session';
+import cookieParser from 'cookie-parser';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import router from './routers/index.js';
@@ -22,6 +23,7 @@ export const startServer = () => {
 
   app.use(express.json());
   app.use(cors());
+  app.use(cookieParser());
 
   app.use(
     pino({
