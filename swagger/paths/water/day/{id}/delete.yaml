@@ -1,0 +1,30 @@
+tags:
+  - Water
+summary: Delete a water record by ID
+operationId: deleteDayWater
+security:
+- bearerAuth: []
+parameters:
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: string
+responses:
+  200:
+    description: Deleted
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            msg:
+              type: string
+              example: DELETED!
+            waterRecord:
+              type: object
+              $ref: ../../../../components/schemas/water.yaml
+  400:
+    description: Bad Request
+  500:
+    description: Internal Server Error

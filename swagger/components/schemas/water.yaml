@@ -1,0 +1,25 @@
+type: object
+required:
+  - localDate
+  - localTime
+  - waterValue
+  - owner
+properties:
+  _id:
+    type: string
+    example: "60d0fe4f5311236168a109ca"
+  localDate:
+    type: string
+    example: "2023-07-22"
+  localTime:
+    type: string
+    example: "14:30"
+  waterValue:
+    type: number
+    example: 250
+  owner:
+    type: string
+    example: "60d0fe4f5311236168a109cb"
+  localMonth:
+    type: string
+    example: "07-2023"

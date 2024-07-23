@@ -9,7 +9,7 @@ import { errorHandler } from './middlewares/errorHandler.js';
 import router from './routers/index.js';
 import { UPLOAD_DIR } from './constants/avatar.js';
 import authRouter from './routers/auth.js';
-// import { swaggerDocs } from './middlewares/swaggerDocs.js';
+import { swaggerDocs } from './middlewares/swaggerDocs.js';
 
 dotenv.config();
 
@@ -55,7 +55,8 @@ export const startServer = () => {
   app.use(passport.session());
 
   app.use('/auth', authRouter);
-  // app.use('/api-docs', swaggerDocs());
+  
+  app.use('/api-docs', swaggerDocs());
 
   app.use(router);
 
