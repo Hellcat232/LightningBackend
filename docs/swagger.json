@@ -11,6 +11,10 @@
   },
   "servers": [
     {
+      "url": "http://localhost:3000",
+      "description": "Local development server"
+    },
+    {
       "url": "https://lightningbackend.onrender.com"
     }
   ],
@@ -345,10 +349,11 @@
                   "gender": {
                     "type": "string",
                     "enum": [
-                      "Male",
-                      "Female"
+                      "female",
+                      "male",
+                      "woman"
                     ],
-                    "example": "Male"
+                    "example": "male"
                   },
                   "avatar": {
                     "type": "string",

@@ -21,9 +21,10 @@ requestBody:
           gender:
             type: string
             enum:
-              - Male
-              - Female
-            example: Male
+              - female
+              - male
+              - woman
+            example: male
           avatar:
             type: string
             format: binary
