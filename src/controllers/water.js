@@ -7,6 +7,7 @@ import {
   getMonthWaterServiceForFront,
 } from '../services/water.js';
 
+// Контроллер для добавления записи о воде
 export const addWaterController = async (req, res, next) => {
   try {
     console.log(req.body);
@@ -29,6 +30,7 @@ export const addWaterController = async (req, res, next) => {
   }
 };
 
+// Контроллер для удаления записи о воде
 export const deleteWaterController = async (req, res, next) => {
   try {
     const waterRecord = await deleteWaterRecordIdService(req.water.id);
@@ -49,6 +51,7 @@ export const deleteWaterController = async (req, res, next) => {
   }
 };
 
+// Контроллер для обновления записи о воде
 export const updateWaterController = async (req, res, next) => {
   try {
     const waterRecord = await updateWaterRecordIdService(
@@ -72,6 +75,7 @@ export const updateWaterController = async (req, res, next) => {
   }
 };
 
+// Контроллер для получения дневных записей о воде
 export const getDayWaterController = async (req, res, next) => {
   try {
     const { allWaterRecord, feasibility, completed } = await getDayWaterService(
@@ -92,6 +96,7 @@ export const getDayWaterController = async (req, res, next) => {
   }
 };
 
+// Контроллер для получения месячных записей о воде
 export const getMonthWaterController = async (req, res, next) => {
   try {
     const allWaterRecord = await getMonthWaterService(req.body, req.user);
@@ -104,6 +109,8 @@ export const getMonthWaterController = async (req, res, next) => {
     next(e);
   }
 };
+
+// Контроллер для получения месячных записей о воде для фронтенда
 export const getMonthWaterForFrontController = async (req, res, next) => {
   try {
     const owner = req.user;

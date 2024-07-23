@@ -13,6 +13,7 @@ import {
   updateUserValidator,
 } from '../schemas/userValidator.js';
 
+// Middleware для проверки данных при регистрации пользователя
 export const checkCreateUserData = catchAsync(async (req, res, next) => {
   const { value, err } = registerUserSchema(req.body);
 
@@ -27,6 +28,7 @@ export const checkCreateUserData = catchAsync(async (req, res, next) => {
   next();
 });
 
+// Middleware для проверки данных при логине
 export const checkLogInData = (req, res, next) => {
   const { value, err } = loginUserSchema(req.body);
 
@@ -37,6 +39,7 @@ export const checkLogInData = (req, res, next) => {
   next();
 };
 
+// Middleware для защиты маршрутов, требующих авторизации
 export const protect = catchAsync(async (req, res, next) => {
   const token =
     req.headers.authorization?.startsWith('Bearer ') &&
@@ -56,6 +59,7 @@ export const protect = catchAsync(async (req, res, next) => {
   next();
 });
 
+// Middleware для проверки данных при обновлении пользователя
 export const checkUpdateUserData = (req, res, next) => {
   const { value, err } = updateUserValidator(req.body);
 
@@ -66,6 +70,7 @@ export const checkUpdateUserData = (req, res, next) => {
   next();
 };
 
+// Middleware для проверки данных при обновлении токенов
 export const checkRefreshData = (req, res, next) => {
   const { value, err } = refreshUserValidator(req.body);
 
@@ -76,6 +81,7 @@ export const checkRefreshData = (req, res, next) => {
   next();
 };
 
+// Middleware для обновления данных пользователя и токенов
 export const refreshUserData = catchAsync(async (req, res, next) => {
   const token = req.body.refreshToken;
 
