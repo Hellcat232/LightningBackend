@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import passport from 'passport';
 import { OAuth2Client } from 'google-auth-library';
 import { signToken } from '../services/jwtServices.js';
 import { User } from '../db/user.js';
@@ -7,9 +8,21 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const authRouter = Router();
 
+authRouter.get(
+  '/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] }),
+);
+
+authRouter.get(
+  '/google/callback',
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  (req, res) => {
+    res.redirect('https://lightning-team.vercel.app/tracker'); // Перенаправлення на фронтенд після успішної авторизації
+  },
+);
+
 authRouter.post('/google', async (req, res) => {
   const { token } = req.body;
-  console.log('Received token:', token);
 
   try {
     const ticket = await client.verifyIdToken({
@@ -19,7 +32,6 @@ authRouter.post('/google', async (req, res) => {
 
     const payload = ticket.getPayload();
     const { sub, email, name, picture } = payload;
-    console.log('Google payload:', payload);
 
     let user = await User.findOne({ googleId: sub });
     if (!user) {
@@ -34,9 +46,12 @@ authRouter.post('/google', async (req, res) => {
       '7d',
     );
 
+    user.accessToken = accessToken;
+    user.refreshToken = refreshToken;
+    await user.save();
+
     res.json({ accessToken, refreshToken, user });
   } catch (error) {
-    console.error('Error verifying Google token:', error);
     res.status(400).json({ error: 'Invalid ID token' });
   }
 });
