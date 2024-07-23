@@ -13,8 +13,8 @@ tags:
   - name: Water
     description: Water operations.
 servers:
-  # - url: http://localhost:3000
-    #   description: Local development server
+  - url: http://localhost:3000
+    description: Local development server
   - url: https://lightningbackend.onrender.com
 paths:
   /user/login:
