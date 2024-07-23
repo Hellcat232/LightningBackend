@@ -8,8 +8,8 @@ import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import router from './routers/index.js';
 import { UPLOAD_DIR } from './constants/avatar.js';
-// import { swaggerDocs } from './middlewares/swaggerDocs.js';
 import authRouter from './routers/auth.js';
+// import { swaggerDocs } from './middlewares/swaggerDocs.js';
 
 dotenv.config();
 
@@ -24,7 +24,11 @@ export const startServer = () => {
 
   app.use(
     cors({
-      origin: ['http://localhost:3000', 'http://localhost:5173'],
+      origin: [
+        'http://localhost:3000',
+        'http://localhost:5173',
+        'https://lightning-team.vercel.app',
+      ],
       credentials: true,
     }),
   );
@@ -51,16 +55,9 @@ export const startServer = () => {
   app.use(passport.session());
 
   app.use('/auth', authRouter);
-
-  app.use(router);
-
   // app.use('/api-docs', swaggerDocs());
 
-  app.get('/', (req, res) => {
-    res.json({
-      message: 'Hello world!',
-    });
-  });
+  app.use(router);
 
   app.use('*', notFoundHandler);
 
