@@ -1,0 +1,40 @@
+tags:
+  - Water
+summary: Add a water record
+operationId: postDayWater
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          localDate:
+            type: string
+            example: "2023-07-22"
+          localTime:
+            type: string
+            example: "14:30"
+          waterValue:
+            type: number
+            example: 1
+responses:
+  201:
+    description: Created
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            msg:
+              type: string
+              example: CREATED!
+            waterRecord:
+              type: object
+              $ref: ../../../components/schemas/water.yaml
+  400:
+    description: Bad Request
+  500:
+    description: Internal Server Error

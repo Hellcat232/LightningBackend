@@ -1,0 +1,42 @@
+tags:
+  - Water
+summary: Get daily water records
+operationId: getFullDayWater
+security:
+- bearerAuth: []
+parameters:
+  - in: query
+    name: localDate
+    required: true
+    schema:
+      type: string
+      example: "2023-07-22"
+responses:
+  200:
+    description: Retrieved
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            msg:
+              type: string
+              example: GETED!
+            waterRate:
+              type: object
+              properties:
+                feasibility:
+                  type: number
+                  example: 80
+                completed:
+                  type: boolean
+                  example: false
+            waterRecord:
+              type: array
+              items:
+                type: object
+                $ref: ../../../components/schemas/water.yaml
+  400:
+    description: Bad Request
+  500:
+    description: Internal Server Error

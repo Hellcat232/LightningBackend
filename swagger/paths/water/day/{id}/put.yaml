@@ -1,0 +1,46 @@
+tags:
+  - Water
+summary: Update a water record by ID
+operationId: putDayWater
+security:
+- bearerAuth: []
+parameters:
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: string
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          localDate:
+            type: string
+            example: "2023-07-22"
+          localTime:
+            type: string
+            example: "14:30"
+          waterValue:
+            type: number
+            example: 500
+responses:
+  201:
+    description: Updated
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            msg:
+              type: string
+              example: UPDATED!
+            waterRecord:
+              type: object
+              $ref: ../../../../components/schemas/water.yaml
+  400:
+    description: Bad Request
+  500:
+    description: Internal Server Error

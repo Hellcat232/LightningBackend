@@ -42,6 +42,32 @@ paths:
       $ref: ../swagger/paths/user/update/patch.yaml
 
 
+
+  /water/day:
+    post: 
+      $ref: ../swagger/paths/water/day/post.yaml
+
+  /water/day/{id}:
+    put: 
+      $ref: ../swagger/paths/water/day/{id}/put.yaml
+    patch: 
+      $ref: ../swagger/paths/water/day/{id}/patch.yaml
+    delete: 
+      $ref: ../swagger/paths/water/day/{id}/delete.yaml
+
+  /water/fullDay:
+    get: 
+      $ref: ../swagger/paths/water/fullDay/get.yaml
+    post: 
+      $ref: ../swagger/paths/water/fullDay/post.yaml
+
+  /water/fullMonth:
+    get: 
+      $ref: ../swagger/paths/water/fullMonth/get.yaml
+    post: 
+      $ref: ../swagger/paths/water/fullMonth/post.yaml
+
+
 components:
   securitySchemes:
     bearerAuth:
