@@ -17,15 +17,9 @@ requestBody:
       schema:
         type: object
         properties:
-          localDate:
-            type: string
-            example: "2023-07-22"
-          localTime:
-            type: string
-            example: "14:30"
           waterValue:
             type: number
-            example: 500
+            example: 600
 responses:
   201:
     description: Updated

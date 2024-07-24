@@ -1,6 +1,6 @@
 tags:
   - Water
-summary: Get monthly water records
+summary: Post monthly water records
 operationId: postFullMonthWater
 security:
 - bearerAuth: []
@@ -13,7 +13,7 @@ requestBody:
         properties:
           localDate:
             type: string
-            example: "2023-07-22"
+            example: "2024-07-24"
 responses:
   200:
     description: Retrieved
