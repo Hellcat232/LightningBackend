@@ -110,15 +110,16 @@ export const getMonthWaterController = async (req, res, next) => {
   }
 };
 
-// Контроллер для получения месячных записей о воде для фронтенда
 export const getMonthWaterForFrontController = async (req, res, next) => {
   try {
     const owner = req.user;
     const date = req.body;
 
+    // Получаем данные для фронтенда
     const { sortedResult, totalWaterDrunk } =
       await getMonthWaterServiceForFront(date, owner);
 
+    // Формируем ответ
     res.status(200).json({
       msg: 'Monthly water data retrieved!',
       waterRecord: sortedResult,

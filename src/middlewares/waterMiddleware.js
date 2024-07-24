@@ -55,19 +55,16 @@ export const checkIdMiddleware = async (req, res, next) => {
 
 export const checkAllWaterDataMiddleware = async (req, res, next) => {
   try {
-    // Валидация данных для получения всех записей о воде
-    const { value, err } = checkAllWaterValidator(req.body);
-    if (err) throw HttpError(400, 'Bad Request', err);
-
-    // Нормализация даты, если она присутствует
-    if (value.localDate) {
-      const localDate = dateNormalizer(value.localDate);
-      req.body = { localDate };
-      return next();
+    const { value, error } = checkAllWaterValidator(req.body);
+    if (error) {
+      return next(HttpError(400, 'Bad Request', error.details));
     }
 
-    // Установка текущей даты, если она не предоставлена
-    req.body = { localDate: localDate() };
+    if (value.localDate) {
+      req.body.localDate = dateNormalizer(value.localDate);
+    } else {
+      req.body.localDate = localDate();
+    }
 
     next();
   } catch (e) {

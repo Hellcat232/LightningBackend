@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import { Water } from '../db/water.js';
 
 // Получает текущую локальную дату в формате строки
@@ -67,19 +66,33 @@ export const updateWaterRecordIdService = async (id, waterData) => {
 };
 // Получает все записи о потреблении воды за конкретный день для конкретного владельца, вычисляет общее количество воды и проверяет, достигнут ли дневной норматив
 export const getDayWaterService = async (date, owner) => {
-  const allWaterRecord = await Water.find({
-    owner: owner.id,
-    localDate: date.localDate,
-  });
+  try {
+    const allWaterRecord = await Water.find({
+      owner: owner.id,
+      localDate: date.localDate,
+    });
 
-  let totalDay = 0;
-  allWaterRecord.forEach((i) => (totalDay += i.waterValue));
+    // Вычисляем общее количество воды за день
+    let totalDay = allWaterRecord.reduce(
+      (sum, record) => sum + (record.waterValue || 0),
+      0,
+    );
 
-  if (totalDay >= Number(owner.waterRate) * 1000)
-    return { allWaterRecord, feasibility: 100, completed: true };
+    // Получаем дневную норму
+    const dailyGoal = Number(owner.waterRate) * 1000;
+    totalDay = Math.ceil(totalDay);
+    const feasibility = Math.ceil((totalDay / dailyGoal) * 100);
+    const completed = totalDay >= dailyGoal;
 
-  const feasibility = (totalDay / (Number(owner.waterRate) * 1000)) * 100;
-  return { allWaterRecord, feasibility, completed: false };
+    return {
+      allWaterRecord,
+      feasibility,
+      completed,
+    };
+  } catch (e) {
+    console.error('Error fetching day water data', e);
+    throw e;
+  }
 };
 // Получает все записи о потреблении воды за месяц, группирует их по дате и сортирует по времени в пределах каждой даты
 export const getMonthWaterService = async (date, owner) => {
@@ -108,52 +121,68 @@ export const getMonthWaterService = async (date, owner) => {
 
   return sortedResult;
 };
-// Получает все записи о потреблении воды за месяц, группирует их по дате и сортирует по времени. Дополнительно вычисляет общее количество потребленной воды за месяц и возвращает это вместе с отсортированными записями
+
 export const getMonthWaterServiceForFront = async (date, owner) => {
-  const allWaterRecord = await Water.find({
-    owner: owner.id,
-    localMonth: date.localDate.slice(3),
-  });
+  try {
+    console.log('Fetching month water data for', date, owner);
 
-  // Группировка данных по дате
-  const result = allWaterRecord.reduce((acc, item) => {
-    let key = item.localDate;
-    if (!acc[key]) {
-      acc[key] = [];
-    }
-    acc[key].push(item);
-    return acc;
-  }, {});
-
-  // Сортировка по дате и времени
-  const sortedKeys = Object.keys(result).sort();
-  const sortedResult = {};
-  for (let key of sortedKeys) {
-    sortedResult[key] = result[key].sort((a, b) => {
-      return a.localTime.localeCompare(b.localTime);
+    const allWaterRecord = await Water.find({
+      owner: owner.id,
+      localMonth: date.localDate.slice(3),
     });
-  }
 
-  // Вычисление общего количества воды за месяц
-  const totalWaterDrunk = allWaterRecord.reduce((sum, record) => {
-    return sum + (record.waterValue || 0);
-  }, 0);
-
-  // Вычисление общего количества воды по дате
-  const dailyTotals = Object.entries(sortedResult).reduce(
-    (acc, [date, records]) => {
-      const dailyTotal = records.reduce(
-        (sum, record) => sum + (record.waterValue || 0),
-        0,
-      );
-      acc[date] = {
-        records,
-        dailyTotal,
-      };
+    // Группировка данных
+    const result = allWaterRecord.reduce((acc, item) => {
+      let key = item.localDate;
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(item);
       return acc;
-    },
-    {},
-  );
+    }, {});
 
-  return { sortedResult: dailyTotals, totalWaterDrunk };
+    // Сортировка данных
+    const sortedKeys = Object.keys(result).sort();
+    const sortedResult = {};
+    for (let key of sortedKeys) {
+      sortedResult[key] = result[key].sort((a, b) => {
+        return a.localTime.localeCompare(b.localTime);
+      });
+    }
+
+    // Вычисление общего количества воды
+    const totalWaterDrunk = allWaterRecord.reduce((sum, record) => {
+      return sum + (record.waterValue || 0);
+    }, 0);
+
+    // Вычисление дневных норм
+    const dailyTotals = Object.entries(sortedResult).reduce(
+      (acc, [date, records]) => {
+        const dailyTotal = records.reduce(
+          (sum, record) => sum + (record.waterValue || 0),
+          0,
+        );
+        const dailyGoal = Number(owner.waterRate) * 1000; // 1000 для преобразования литров в миллилитры
+
+        // Округление и вычисление feasibility
+        acc[date] = {
+          records,
+          dailyTotal: Math.ceil(dailyTotal), // Округляем дневную сумму
+          feasibility: Math.ceil((dailyTotal / dailyGoal) * 100), // Округляем процент выполнения
+          completed: dailyTotal >= dailyGoal,
+        };
+        return acc;
+      },
+      {},
+    );
+
+    console.log('Monthly water data successfully fetched');
+    return {
+      sortedResult: dailyTotals,
+      totalWaterDrunk: Math.ceil(totalWaterDrunk),
+    };
+  } catch (e) {
+    console.error('Error fetching month water data', e);
+    throw e; // Обработка ошибок
+  }
 };
