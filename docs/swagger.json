@@ -11,11 +11,11 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000",
-      "description": "Local development server"
+      "url": "https://lightningbackend.onrender.com"
     },
     {
-      "url": "https://lightningbackend.onrender.com"
+      "url": "http://localhost:3000",
+      "description": "Local development server"
     }
   ],
   "tags": [
@@ -428,17 +428,9 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "localDate": {
-                    "type": "string",
-                    "example": "2023-07-22"
-                  },
-                  "localTime": {
-                    "type": "string",
-                    "example": "14:30"
-                  },
                   "waterValue": {
                     "type": "number",
-                    "example": 1
+                    "example": 250
                   }
                 }
               }
@@ -504,14 +496,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "localDate": {
-                    "type": "string",
-                    "example": "2023-07-22"
-                  },
-                  "localTime": {
-                    "type": "string",
-                    "example": "14:30"
-                  },
                   "waterValue": {
                     "type": "number",
                     "example": 500
@@ -578,17 +562,9 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "localDate": {
-                    "type": "string",
-                    "example": "2023-07-22"
-                  },
-                  "localTime": {
-                    "type": "string",
-                    "example": "14:30"
-                  },
                   "waterValue": {
                     "type": "number",
-                    "example": 500
+                    "example": 600
                   }
                 }
               }
@@ -694,7 +670,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "example": "2023-07-22"
+              "example": "2024-07-24"
             }
           }
         ],
@@ -727,79 +703,42 @@
                       "type": "array",
                       "items": {
                         "type": "object",
-                        "$ref": "#/components/schemas/water"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Water"
-        ],
-        "summary": "Get daily water records",
-        "operationId": "postFullDayWater",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "localDate": {
-                    "type": "string",
-                    "example": "2023-07-22"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Retrieved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "msg": {
-                      "type": "string",
-                      "example": "GETED!"
-                    },
-                    "waterRate": {
-                      "type": "object",
-                      "properties": {
-                        "feasibility": {
-                          "type": "number",
-                          "example": 80
-                        },
-                        "completed": {
-                          "type": "boolean",
-                          "example": false
+                        "properties": {
+                          "_id": {
+                            "type": "string",
+                            "example": "66a0d6dfbb254e5308c48e80"
+                          },
+                          "owner": {
+                            "type": "string",
+                            "example": "669fb9997871c8f7eeea3db4"
+                          },
+                          "localMonth": {
+                            "type": "string",
+                            "example": "07.2024"
+                          },
+                          "localDate": {
+                            "type": "string",
+                            "example": "24.07.2024"
+                          },
+                          "waterValue": {
+                            "type": "number",
+                            "example": 600
+                          },
+                          "localTime": {
+                            "type": "string",
+                            "example": "12:26"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2024-07-24T10:26:39.165Z"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2024-07-24T10:29:15.693Z"
+                          }
                         }
-                      }
-                    },
-                    "waterRecord": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "$ref": "#/components/schemas/water"
                       }
                     }
                   }
@@ -835,7 +774,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "example": "2023-07-22"
+              "example": "2024-07-24"
             }
           }
         ],
@@ -857,71 +796,48 @@
                         "type": "array",
                         "items": {
                           "type": "object",
-                          "$ref": "#/components/schemas/water"
+                          "properties": {
+                            "_id": {
+                              "type": "string",
+                              "example": "66a0d6dfbb254e5308c48e80"
+                            },
+                            "owner": {
+                              "type": "string",
+                              "example": "669fb9997871c8f7eeea3db4"
+                            },
+                            "localMonth": {
+                              "type": "string",
+                              "example": "07.2024"
+                            },
+                            "localDate": {
+                              "type": "string",
+                              "example": "24.07.2024"
+                            },
+                            "waterValue": {
+                              "type": "number",
+                              "example": 600
+                            },
+                            "localTime": {
+                              "type": "string",
+                              "example": "12:26"
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "example": "2024-07-24T10:26:39.165Z"
+                            },
+                            "updatedAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "example": "2024-07-24T10:29:15.693Z"
+                            }
+                          }
                         }
                       }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Water"
-        ],
-        "summary": "Get monthly water records",
-        "operationId": "postFullMonthWater",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "localDate": {
-                    "type": "string",
-                    "example": "2023-07-22"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Retrieved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "msg": {
-                      "type": "string",
-                      "example": "GETED!"
                     },
-                    "waterRecord": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "$ref": "#/components/schemas/water"
-                        }
-                      }
+                    "totalWaterDrunk": {
+                      "type": "number",
+                      "example": 1800
                     }
                   }
                 }
@@ -999,9 +915,13 @@
             "type": "string",
             "example": "60d0fe4f5311236168a109ca"
           },
+          "localMonth": {
+            "type": "string",
+            "example": "07-2024"
+          },
           "localDate": {
             "type": "string",
-            "example": "2023-07-22"
+            "example": "2024-07-24"
           },
           "localTime": {
             "type": "string",
@@ -1014,10 +934,6 @@
           "owner": {
             "type": "string",
             "example": "60d0fe4f5311236168a109cb"
-          },
-          "localMonth": {
-            "type": "string",
-            "example": "07-2023"
           }
         }
       }

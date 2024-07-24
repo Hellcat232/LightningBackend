@@ -3,14 +3,14 @@ tags:
 summary: Get monthly water records
 operationId: getFullMonthWater
 security:
-- bearerAuth: []
+  - bearerAuth: []
 parameters:
   - in: query
     name: localDate
     required: true
     schema:
       type: string
-      example: "2023-07-22"
+      example: "2024-07-24"
 responses:
   200:
     description: Retrieved
@@ -28,7 +28,36 @@ responses:
                 type: array
                 items:
                   type: object
-                  $ref: ../../../components/schemas/water.yaml
+                  properties:
+                    _id:
+                      type: string
+                      example: "66a0d6dfbb254e5308c48e80"
+                    owner:
+                      type: string
+                      example: "669fb9997871c8f7eeea3db4"
+                    localMonth:
+                      type: string
+                      example: "07.2024"
+                    localDate:
+                      type: string
+                      example: "24.07.2024"
+                    waterValue:
+                      type: number
+                      example: 600
+                    localTime:
+                      type: string
+                      example: "12:26"
+                    createdAt:
+                      type: string
+                      format: date-time
+                      example: "2024-07-24T10:26:39.165Z"
+                    updatedAt:
+                      type: string
+                      format: date-time
+                      example: "2024-07-24T10:29:15.693Z"
+            totalWaterDrunk:
+              type: number
+              example: 1800
   400:
     description: Bad Request
   500:

@@ -13,9 +13,10 @@ tags:
   - name: Water
     description: Water operations.
 servers:
+  - url: https://lightningbackend.onrender.com
+
   - url: http://localhost:3000
     description: Local development server
-  - url: https://lightningbackend.onrender.com
 paths:
   /user/login:
     post:
@@ -58,14 +59,10 @@ paths:
   /water/fullDay:
     get: 
       $ref: ../swagger/paths/water/fullDay/get.yaml
-    post: 
-      $ref: ../swagger/paths/water/fullDay/post.yaml
 
   /water/fullMonth:
     get: 
       $ref: ../swagger/paths/water/fullMonth/get.yaml
-    post: 
-      $ref: ../swagger/paths/water/fullMonth/post.yaml
 
 
 components:

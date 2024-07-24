@@ -1,6 +1,6 @@
 tags:
   - Water
-summary: Get daily water records
+summary: Post daily water records
 operationId: postFullDayWater
 security:
 - bearerAuth: []
@@ -13,7 +13,7 @@ requestBody:
         properties:
           localDate:
             type: string
-            example: "2023-07-22"
+            example: "2024-07-24"
 responses:
   200:
     description: Retrieved
