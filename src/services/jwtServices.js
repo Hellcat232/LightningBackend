@@ -10,7 +10,7 @@ export const signToken = (id, key, expiresIn) =>
 // Проверка и декодирование JWT токена
 export const checkToken = (token, key) => {
   if (!token) {
-    throw HttpError(401, 'Unauthorized'); 
+    throw HttpError(401, 'Unauthorized');
   }
   try {
     // Пытаемся декодировать токен и извлечь идентификатор пользователя

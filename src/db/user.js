@@ -1,9 +1,8 @@
 import { model, Schema } from 'mongoose';
 import bcrypt from 'bcrypt';
-
 import { userGender } from '../constants/userGender.js';
 
-const userSchema = Schema(
+const userSchema = new Schema(
   {
     googleId: {
       type: String,
@@ -55,21 +54,17 @@ const userSchema = Schema(
     versionKey: false,
   },
 );
-// Middleware для обработки перед сохранением пользователя
-userSchema.pre('save', async function (next) {
-  // Проверка, изменялся ли пароль
-  if (!this.isModified('password')) return next();
 
-  // Генерация соли и хеширование пароля
+// Middleware для обработки пароля
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
-
   next();
 });
 
-// Метод схемы для проверки пароля пользователя
-userSchema.methods.checkUserPassword = (candidate, passwordHash) =>
-  bcrypt.compare(candidate, passwordHash);
+userSchema.methods.checkUserPassword = function (candidate) {
+  return bcrypt.compare(candidate, this.password);
+};
 
-// Экспорт модели пользователя
 export const User = model('User', userSchema);
