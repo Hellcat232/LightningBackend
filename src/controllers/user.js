@@ -1,3 +1,5 @@
+// src/controllers/user.js
+
 import {
   registerUser,
   loginUserService,
@@ -10,7 +12,6 @@ import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 import { env } from '../utils/env.js';
 import { HttpError } from '../utils/HttpError.js';
 
-
 // Функция для создания нового пользователя
 export const createUser = catchAsync(async (req, res) => {
   const { newUser } = await registerUser(req.body);
@@ -22,7 +23,24 @@ export const createUser = catchAsync(async (req, res) => {
 
 // Функция для входа пользователя
 export const loginUser = catchAsync(async (req, res) => {
-  const { user, accessToken, refreshToken } = await loginUserService(req.body);
+  const { email, password } = req.body;
+  const { user, accessToken, refreshToken, sessionId } = await loginUserService(
+    { email, password },
+  );
+
+  // Установка cookies
+  res.cookie('sessionId', sessionId, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'None',
+    path: '/',
+  });
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'None',
+    path: '/',
+  });
 
   res.status(200).json({
     user: {
@@ -39,11 +57,27 @@ export const loginUser = catchAsync(async (req, res) => {
   });
 });
 
+
+
 // Функция для выхода пользователя
 export const logoutUser = catchAsync(async (req, res) => {
   const id = req.userId;
 
   await logoutUserService(id);
+
+  // Удаление cookies
+  res.clearCookie('sessionId', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'None',
+    path: '/',
+  });
+  res.clearCookie('refreshToken', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'None',
+    path: '/',
+  });
 
   res.sendStatus(204);
 });
@@ -61,30 +95,33 @@ export const currentUser = (req, res) => {
       weight: currentUser.weight,
       sportsActivity: currentUser.sportsActivity,
       waterRate: currentUser.waterRate,
-    }
+    },
   });
 };
 
+
+
 // Функция для обновления данных пользователя
-export const updateUser = async (req, res) => {
+export const updateUser = catchAsync(async (req, res) => {
   const avatar = req.file;
 
   let avatarUrl;
 
   if (avatar) {
-      if (env('ENABLE_CLOUDINARY') === 'true') {
-          avatarUrl = await saveFileToCloudinary(avatar);
-      } else {
-          avatarUrl = await saveFileToUploadDir(avatar);
-      }
+    if (env('ENABLE_CLOUDINARY') === 'true') {
+      avatarUrl = await saveFileToCloudinary(avatar);
+    } else {
+      avatarUrl = await saveFileToUploadDir(avatar);
+    }
   }
+
   const result = await updateUserService(req.user._id, {
     ...req.body,
     avatar: avatarUrl,
   });
 
-  if(!result) {
-    throw HttpError(404, "User not found");
+  if (!result) {
+    throw new HttpError('User not found', 404);
   }
 
   res.status(200).json({
@@ -96,9 +133,9 @@ export const updateUser = async (req, res) => {
       weight: result.user.weight,
       sportsActivity: result.user.sportsActivity,
       waterRate: result.user.waterRate,
-    }
+    },
   });
-};
+});
 
 // Функция для обновления токенов пользователя
 export const refreshUser = (req, res) => {
@@ -118,3 +155,4 @@ export const refreshUser = (req, res) => {
     },
   });
 };
+
