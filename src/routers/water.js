@@ -30,14 +30,9 @@ waterRouter.post(
   getDayWaterController,
 );
 waterRouter.get('/fullDay', checkAllWaterDataMiddleware, getDayWaterController);
-waterRouter.post(
-  '/fullMonth',
-  checkAllWaterDataMiddleware,
-  getMonthWaterController,
-);
 waterRouter.get(
   '/fullMonth',
   checkAllWaterDataMiddleware,
-  getMonthWaterForFrontController,
+  getMonthWaterController,
 );
 export default waterRouter;
