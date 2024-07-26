@@ -113,7 +113,7 @@ export const getMonthWaterController = async (req, res, next) => {
 export const getMonthWaterForFrontController = async (req, res, next) => {
   try {
     const owner = req.user;
-    const date = req.query;
+    const date = req.body;
 
     // Получаем данные для фронтенда
     const { sortedResult, totalWaterDrunk } =

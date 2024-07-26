@@ -1,24 +1,26 @@
 import jwt from 'jsonwebtoken';
 import { HttpError } from '../utils/HttpError.js';
 
-// Создание JWT токена
-export const signToken = (id, key, expiresIn) =>
-  jwt.sign({ id }, key, {
-    expiresIn,
-  });
+export const signToken = (userId, secretKey, expiresIn) => {
+  return jwt.sign({ userId }, secretKey, { expiresIn });
+};
 
-// Проверка и декодирование JWT токена
 export const checkToken = (token, key) => {
   if (!token) {
-    throw HttpError(401, 'Unauthorized');
+    throw HttpError(401, 'Token is required');
   }
   try {
     // Пытаемся декодировать токен и извлечь идентификатор пользователя
-    const { id } = jwt.verify(token, key);
+    const decoded = jwt.verify(token, key);
+    const userId = decoded.userId;
 
-    return id;
+    if (!userId) {
+      throw HttpError(401, 'Invalid token payload');
+    }
+
+    return userId;
   } catch (err) {
-    console.log(err);
+    console.error('Token verification error:', err);
     throw HttpError(401, 'Unauthorized');
   }
 };

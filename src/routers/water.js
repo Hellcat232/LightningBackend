@@ -24,15 +24,12 @@ waterRouter
   .put(checkWaterDataMiddleware, updateWaterController)
   .patch(checkWaterDataMiddleware, updateWaterController)
   .delete(deleteWaterController);
-waterRouter.post(
-  '/fullDay',
-  checkAllWaterDataMiddleware,
-  getDayWaterController,
-);
 waterRouter.get('/fullDay', checkAllWaterDataMiddleware, getDayWaterController);
+
 waterRouter.get(
   '/fullMonth',
   checkAllWaterDataMiddleware,
+  getMonthWaterForFrontController,
   getMonthWaterController,
 );
 export default waterRouter;

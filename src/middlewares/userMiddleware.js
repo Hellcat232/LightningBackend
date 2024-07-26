@@ -12,6 +12,8 @@ import {
   refreshUserValidator,
   updateUserValidator,
 } from '../schemas/userValidator.js';
+import { generateSessionId } from '../utils/generateSessionId.js';
+import { SessionsCollection } from '../db/session.js';
 
 // Middleware для проверки данных при регистрации пользователя
 export const checkCreateUserData = catchAsync(async (req, res, next) => {
@@ -83,35 +85,59 @@ export const checkRefreshData = (req, res, next) => {
 
 // Middleware для обновления данных пользователя и токенов
 export const refreshUserData = catchAsync(async (req, res, next) => {
-  const token = req.body.refreshToken;
+  const { refreshToken } = req.body;
 
-  const userId = checkToken(token, process.env.REFRESH_SECRET_KEY);
+  // Verify the refresh token and get user ID
+  const userId = checkToken(refreshToken, process.env.REFRESH_SECRET_KEY);
 
   if (!userId) throw HttpError(403, 'Token invalid');
 
   const currentUser = await getUserByIdService(userId);
 
-  if (!currentUser) throw HttpError(403, 'Token invalid');
+  if (!currentUser) throw HttpError(403, 'User not found');
 
-  const accessToken = signToken(
-    currentUser.id,
+  // Generate new tokens
+  const newAccessToken = signToken(
+    currentUser._id,
     process.env.ACCESS_SECRET_KEY,
     process.env.ACCESS_EXPIRES_IN,
   );
 
-  const refreshToken = signToken(
-    currentUser.id,
+  const newRefreshToken = signToken(
+    currentUser._id,
     process.env.REFRESH_SECRET_KEY,
     process.env.REFRESH_EXPIRES_IN,
   );
 
-  currentUser.accessToken = accessToken;
-  currentUser.refreshToken = refreshToken;
-  await currentUser.save();
+  // Generate a new session ID
+  const newSessionId = generateSessionId();
 
-  req.currentUserRef = currentUser;
-  req.accessToken = accessToken;
-  req.refreshToken = refreshToken;
+  // Update or create a new session in the database
+  await SessionsCollection.updateOne(
+    { userId: currentUser._id },
+    {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+      accessTokenValidUntil: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
+      refreshTokenValidUntil: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 day
+      sessionId: newSessionId,
+    },
+    { upsert: true },
+  );
 
-  next();
+  // Attach the new session ID, tokens, and user data to the response
+  res.status(200).json({
+    accessToken: newAccessToken,
+    refreshToken: newRefreshToken,
+    sessionId: newSessionId,
+    user: {
+      name: currentUser.name,
+      email: currentUser.email,
+      gender: currentUser.gender,
+      avatar: currentUser.avatar,
+      weight: currentUser.weight,
+      sportsActivity: currentUser.sportsActivity,
+      waterRate: currentUser.waterRate,
+    },
+  });
 });
