@@ -1,5 +1,3 @@
-// src/controllers/user.js
-
 import {
   registerUser,
   loginUserService,
@@ -56,7 +54,6 @@ export const loginUser = catchAsync(async (req, res) => {
     refreshToken,
   });
 });
-
 
 
 // Функция для выхода пользователя

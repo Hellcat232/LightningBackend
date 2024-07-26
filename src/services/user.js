@@ -1,5 +1,5 @@
 import { User } from '../db/user.js';
-import { SessionsCollection } from '../db/session.js'; 
+import { SessionsCollection } from '../db/session.js';
 import { generateSessionId } from '../utils/generateSessionId.js';
 import { signToken } from './jwtServices.js';
 import bcrypt from 'bcrypt';
@@ -24,7 +24,6 @@ export const registerUser = async (userData) => {
   return { newUser };
 };
 
-// Log in a user and return tokens
 export const loginUserService = async ({ email, password }) => {
   const user = await User.findOne({ email });
   if (!user) throw createHttpError(401, 'Email or password is wrong');
@@ -56,13 +55,14 @@ export const loginUserService = async ({ email, password }) => {
     refreshToken,
     accessTokenValidUntil: new Date(Date.now() + 15 * 60 * 1000), // 15 минут
     refreshTokenValidUntil: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 день
+    sessionId, // Save sessionId
   });
 
   return {
     user,
     accessToken,
     refreshToken,
-    sessionId,
+    sessionId, // Return sessionId
   };
 };
 
