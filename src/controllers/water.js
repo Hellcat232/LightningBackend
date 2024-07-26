@@ -121,9 +121,9 @@ export const getMonthWaterForFrontController = async (req, res, next) => {
 
     // Формируем ответ
     res.status(200).json({
-      msg: 'Monthly water data retrieved!',
-      waterRecord: sortedResult,
+      msg: 'GETED!',
       totalWaterDrunk,
+      waterRecord: sortedResult,
     });
   } catch (e) {
     next(e);

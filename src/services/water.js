@@ -9,7 +9,6 @@ export const localDate = () => {
 };
 
 // Получает текущие часы и минуты в локальном формате времени
-
 export const localTime = () => {
   const milliseconds = Date.now();
   const time = new Date(milliseconds);
@@ -24,7 +23,6 @@ export const localTime = () => {
 };
 
 // Преобразует дату в строковом формате, разделенную различными символами (/, \, ., -), в формат с точками
-
 export const dateNormalizer = (dateValue) => {
   const arr = dateValue.split(/[\\/.\-]/).join('.');
 
@@ -40,18 +38,21 @@ export const addWaterService = async (waterData, owner) => {
 
   return waterRecord;
 };
+
 // Находит и возвращает запись о потреблении воды по идентификатору
 export const getWaterRecordIdService = async (id) => {
   const waterRecord = await Water.findById(id);
 
   return waterRecord;
 };
+
 // Удаляет запись о потреблении воды по идентификатору и возвращает удаленные данные
 export const deleteWaterRecordIdService = async (id) => {
   const waterData = await Water.findByIdAndDelete(id);
 
   return waterData;
 };
+
 // Обновляет запись о потреблении воды по идентификатору, добавляя или изменяя месяц
 export const updateWaterRecordIdService = async (id, waterData) => {
   const localMonth = waterData.localDate.slice(3);
@@ -64,6 +65,7 @@ export const updateWaterRecordIdService = async (id, waterData) => {
 
   return waterRecord;
 };
+
 // Получает все записи о потреблении воды за конкретный день для конкретного владельца, вычисляет общее количество воды и проверяет, достигнут ли дневной норматив
 export const getDayWaterService = async (date, owner) => {
   try {
@@ -81,7 +83,7 @@ export const getDayWaterService = async (date, owner) => {
     // Получаем дневную норму
     const dailyGoal = Number(owner.waterRate) * 1000;
     totalDay = Math.ceil(totalDay);
-    const feasibility = Math.ceil((totalDay / dailyGoal) * 100);
+    const feasibility = Math.min(100, Math.ceil((totalDay / dailyGoal) * 100));
     const completed = totalDay >= dailyGoal;
 
     return {
@@ -94,6 +96,7 @@ export const getDayWaterService = async (date, owner) => {
     throw e;
   }
 };
+
 // Получает все записи о потреблении воды за месяц, группирует их по дате и сортирует по времени в пределах каждой даты
 export const getMonthWaterService = async (date, owner) => {
   const allWaterRecord = await Water.find({
@@ -112,16 +115,29 @@ export const getMonthWaterService = async (date, owner) => {
 
   const sortedKeys = Object.keys(result).sort();
 
-  const sortedResult = {};
-  for (let key of sortedKeys) {
-    sortedResult[key] = result[key].sort((a, b) => {
-      return a.localTime.localeCompare(b.localTime);
-    });
-  }
+  const sortedResult = sortedKeys.map((key) => {
+    const records = result[key].sort((a, b) =>
+      a.localTime.localeCompare(b.localTime),
+    );
+    const dailyTotal = records.reduce(
+      (sum, record) => sum + (record.waterValue || 0),
+      0,
+    );
+    const dailyGoal = Number(owner.waterRate) * 1000;
+
+    return {
+      localDate: key,
+      records,
+      dailyTotal: Math.ceil(dailyTotal),
+      feasibility: Math.min(100, Math.ceil((dailyTotal / dailyGoal) * 100)),
+      completed: dailyTotal >= dailyGoal,
+    };
+  });
 
   return sortedResult;
 };
 
+// Получает данные для отображения на фронтенде, включая общее количество выпитой воды и проценты выполнения дневных норм
 export const getMonthWaterServiceForFront = async (date, owner) => {
   try {
     console.log('Fetching month water data for', date, owner);
@@ -131,7 +147,6 @@ export const getMonthWaterServiceForFront = async (date, owner) => {
       localMonth: date.localDate.slice(3),
     });
 
-    // Группировка данных
     const result = allWaterRecord.reduce((acc, item) => {
       let key = item.localDate;
       if (!acc[key]) {
@@ -141,44 +156,34 @@ export const getMonthWaterServiceForFront = async (date, owner) => {
       return acc;
     }, {});
 
-    // Сортировка данных
     const sortedKeys = Object.keys(result).sort();
-    const sortedResult = {};
-    for (let key of sortedKeys) {
-      sortedResult[key] = result[key].sort((a, b) => {
-        return a.localTime.localeCompare(b.localTime);
-      });
-    }
+    const sortedResult = sortedKeys.map((key) => {
+      const records = result[key].sort((a, b) =>
+        a.localTime.localeCompare(b.localTime),
+      );
+      const dailyTotal = records.reduce(
+        (sum, record) => sum + (record.waterValue || 0),
+        0,
+      );
+      const dailyGoal = Number(owner.waterRate) * 1000;
 
-    // Вычисление общего количества воды
-    const totalWaterDrunk = allWaterRecord.reduce((sum, record) => {
-      return sum + (record.waterValue || 0);
-    }, 0);
+      return {
+        localDate: key,
+        records,
+        dailyTotal: Math.ceil(dailyTotal),
+        feasibility: Math.min(100, Math.ceil((dailyTotal / dailyGoal) * 100)),
+        completed: dailyTotal >= dailyGoal,
+      };
+    });
 
-    // Вычисление дневных норм
-    const dailyTotals = Object.entries(sortedResult).reduce(
-      (acc, [date, records]) => {
-        const dailyTotal = records.reduce(
-          (sum, record) => sum + (record.waterValue || 0),
-          0,
-        );
-        const dailyGoal = Number(owner.waterRate) * 1000; // 1000 для преобразования литров в миллилитры
-
-        // Округление и вычисление feasibility
-        acc[date] = {
-          records,
-          dailyTotal: Math.ceil(dailyTotal), // Округляем дневную сумму
-          feasibility: Math.ceil((dailyTotal / dailyGoal) * 100), // Округляем процент выполнения
-          completed: dailyTotal >= dailyGoal,
-        };
-        return acc;
-      },
-      {},
+    const totalWaterDrunk = allWaterRecord.reduce(
+      (sum, record) => sum + (record.waterValue || 0),
+      0,
     );
 
     console.log('Monthly water data successfully fetched');
     return {
-      sortedResult: dailyTotals,
+      sortedResult,
       totalWaterDrunk: Math.ceil(totalWaterDrunk),
     };
   } catch (e) {
