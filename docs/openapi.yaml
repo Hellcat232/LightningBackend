@@ -23,47 +23,44 @@ paths:
       $ref: ../swagger/paths/user/login/post.yaml
 
   /user/current:
-    get: 
+    get:
       $ref: ../swagger/paths/user/current/get.yaml
 
   /user/logout:
-    post: 
+    post:
       $ref: ../swagger/paths/user/logout/post.yaml
 
   /user/refresh:
-    post: 
+    post:
       $ref: ../swagger/paths/user/refresh/post.yaml
 
   /user/register:
-    post: 
+    post:
       $ref: ../swagger/paths/user/register/post.yaml
 
   /user/update:
-    patch: 
+    patch:
       $ref: ../swagger/paths/user/update/patch.yaml
 
-
-
   /water/day:
-    post: 
+    post:
       $ref: ../swagger/paths/water/day/post.yaml
 
   /water/day/{id}:
-    put: 
+    put:
       $ref: ../swagger/paths/water/day/{id}/put.yaml
-    patch: 
+    patch:
       $ref: ../swagger/paths/water/day/{id}/patch.yaml
-    delete: 
+    delete:
       $ref: ../swagger/paths/water/day/{id}/delete.yaml
 
   /water/fullDay:
-    get: 
+    get:
       $ref: ../swagger/paths/water/fullDay/get.yaml
 
   /water/fullMonth:
-    get: 
+    get:
       $ref: ../swagger/paths/water/fullMonth/get.yaml
-
 
 components:
   securitySchemes:
