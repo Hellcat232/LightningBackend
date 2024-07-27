@@ -14,6 +14,12 @@ requestBody:
           waterValue:
             type: number
             example: 250
+          localDate:
+            type: string
+            example: '23.05.2024'
+          localTime:
+            type: string
+            example: '14:30'
 responses:
   201:
     description: Created
@@ -26,8 +32,7 @@ responses:
               type: string
               example: CREATED!
             waterRecord:
-              type: object
-              $ref: ../../../components/schemas/water.yaml
+              $ref: ..\..\..\components\schemas\waterRecordAdd.yaml
   400:
     description: Bad Request
   500:
