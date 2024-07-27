@@ -893,10 +893,6 @@
             "type": "string",
             "example": "koji221111222112619@cutxsew.com"
           },
-          "password": {
-            "type": "string",
-            "example": "$2b$10$1r2yhqs2UprL0TH876bQ.OoE/TCmy6B0S6qpOz27WvvlzaYTtg056"
-          },
           "accessToken": {
             "type": [
               "string",
