@@ -32,7 +32,7 @@ export const loginUserService = async ({ email, password }) => {
   if (!passwordIsValid)
     throw createHttpError(401, 'Email or password is wrong');
 
-  // Удаление всех предыдущих сессий
+  // Remove all previous sessions
   await SessionsCollection.deleteMany({ userId: user._id });
 
   const accessToken = signToken(
@@ -46,26 +46,24 @@ export const loginUserService = async ({ email, password }) => {
     process.env.REFRESH_EXPIRES_IN,
   );
 
-  const sessionId = generateSessionId(); // Генерация нового идентификатора сессии
+  const sessionId = generateSessionId();
 
-  // Сохранение новой сессии в базе данных
   await SessionsCollection.create({
     userId: user._id,
     accessToken,
     refreshToken,
-    accessTokenValidUntil: new Date(Date.now() + 15 * 60 * 1000), // 15 минут
-    refreshTokenValidUntil: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 день
-    sessionId, // Save sessionId
+    accessTokenValidUntil: new Date(Date.now() + 15 * 60 * 1000),
+    refreshTokenValidUntil: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    sessionId,
   });
 
   return {
     user,
     accessToken,
     refreshToken,
-    sessionId, // Return sessionId
+    sessionId,
   };
 };
-
 // Get user by ID
 export const getUserByIdService = (id) => {
   return User.findById(id);
