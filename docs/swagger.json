@@ -223,6 +223,10 @@
                       "type": "string",
                       "example": "efJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ8.eyJpZCI6IjY2OWE3NzRkMDYzYjM2ZjJhMjNmODIyYyIsImlhdCI7MTYyMTU5OTY1MCwiZXhwIjoxNzIxNjAzMjUwfQ.znG4iJzCsVkapp4v8lvKaUtNBtHZ6fbHGzIn9FIrrjg"
                     },
+                    "sessionId": {
+                      "type": "string",
+                      "example": "mkkl6dD9zekaY4LFw25z5sy7wYrJo3RLyso+A31y"
+                    },
                     "user": {
                       "type": "object",
                       "$ref": "#/components/schemas/user"
@@ -431,6 +435,14 @@
                   "waterValue": {
                     "type": "number",
                     "example": 250
+                  },
+                  "localDate": {
+                    "type": "string",
+                    "example": "23.05.2024"
+                  },
+                  "localTime": {
+                    "type": "string",
+                    "example": "14:30"
                   }
                 }
               }
@@ -450,8 +462,7 @@
                       "example": "CREATED!"
                     },
                     "waterRecord": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/water"
+                      "$ref": "#/components/schemas/waterRecordAdd"
                     }
                   }
                 }
@@ -670,7 +681,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "example": "2024-07-24"
+              "example": "27.07.2024"
             }
           }
         ],
@@ -774,7 +785,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "example": "2024-07-24"
+              "example": "25.05.2024"
             }
           }
         ],
@@ -790,54 +801,15 @@
                       "type": "string",
                       "example": "GETED!"
                     },
-                    "waterRecord": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "_id": {
-                              "type": "string",
-                              "example": "66a0d6dfbb254e5308c48e80"
-                            },
-                            "owner": {
-                              "type": "string",
-                              "example": "669fb9997871c8f7eeea3db4"
-                            },
-                            "localMonth": {
-                              "type": "string",
-                              "example": "07.2024"
-                            },
-                            "localDate": {
-                              "type": "string",
-                              "example": "24.07.2024"
-                            },
-                            "waterValue": {
-                              "type": "number",
-                              "example": 600
-                            },
-                            "localTime": {
-                              "type": "string",
-                              "example": "12:26"
-                            },
-                            "createdAt": {
-                              "type": "string",
-                              "format": "date-time",
-                              "example": "2024-07-24T10:26:39.165Z"
-                            },
-                            "updatedAt": {
-                              "type": "string",
-                              "format": "date-time",
-                              "example": "2024-07-24T10:29:15.693Z"
-                            }
-                          }
-                        }
-                      }
-                    },
                     "totalWaterDrunk": {
                       "type": "number",
-                      "example": 1800
+                      "example": 2700
+                    },
+                    "waterRecord": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/waterRecordFullMonth"
+                      }
                     }
                   }
                 }
@@ -902,6 +874,123 @@
           }
         }
       },
+      "owner": {
+        "type": "object",
+        "required": [
+          "_id",
+          "email",
+          "name",
+          "waterRate",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "66a49dbcaf423ab2f8483baf"
+          },
+          "email": {
+            "type": "string",
+            "example": "koji221111222112619@cutxsew.com"
+          },
+          "accessToken": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": null
+          },
+          "refreshToken": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": null
+          },
+          "name": {
+            "type": "string",
+            "example": "Ko333"
+          },
+          "gender": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": null
+          },
+          "avatar": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": null
+          },
+          "weight": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "example": null
+          },
+          "sportsActivity": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": null
+          },
+          "waterRate": {
+            "type": "string",
+            "example": "1.5"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-07-27T07:11:56.091Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-07-27T12:06:16.546Z"
+          }
+        }
+      },
+      "waterRecordAdd": {
+        "type": "object",
+        "required": [
+          "_id",
+          "localMonth",
+          "localDate",
+          "localTime",
+          "waterValue",
+          "owner"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "66a5012643030e5ea5cd37bf"
+          },
+          "localMonth": {
+            "type": "string",
+            "example": "07.2024"
+          },
+          "localDate": {
+            "type": "string",
+            "example": "27.07.2024"
+          },
+          "localTime": {
+            "type": "string",
+            "example": "16:16"
+          },
+          "waterValue": {
+            "type": "number",
+            "example": 500
+          },
+          "owner": {
+            "$ref": "#/components/schemas/owner"
+          }
+        }
+      },
       "water": {
         "type": "object",
         "required": [
@@ -921,7 +1010,7 @@
           },
           "localDate": {
             "type": "string",
-            "example": "2024-07-24"
+            "example": "23.05.2024"
           },
           "localTime": {
             "type": "string",
@@ -934,6 +1023,75 @@
           "owner": {
             "type": "string",
             "example": "60d0fe4f5311236168a109cb"
+          }
+        }
+      },
+      "record": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "66a4b737f8ea2c7d1f1b3aa1"
+          },
+          "owner": {
+            "type": "string",
+            "example": "66a49dbcaf423ab2f8483baf"
+          },
+          "localMonth": {
+            "type": "string",
+            "example": "05.2024"
+          },
+          "localDate": {
+            "type": "string",
+            "example": "23.05.2024"
+          },
+          "localTime": {
+            "type": "string",
+            "example": "14:30"
+          },
+          "waterValue": {
+            "type": "number",
+            "example": 300
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-07-27T09:00:39.345Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-07-27T09:00:39.345Z"
+          }
+        }
+      },
+      "waterRecordFullMonth": {
+        "type": "object",
+        "required": [
+          "localDate"
+        ],
+        "properties": {
+          "localDate": {
+            "type": "string",
+            "example": "23.05.2024"
+          },
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/record"
+            }
+          },
+          "dailyTotal": {
+            "type": "number",
+            "example": 2700
+          },
+          "feasibility": {
+            "type": "number",
+            "example": 100
+          },
+          "completed": {
+            "type": "boolean",
+            "example": true
           }
         }
       }

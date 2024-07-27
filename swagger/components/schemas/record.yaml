@@ -1,0 +1,28 @@
+type: object
+properties:
+  _id:
+    type: string
+    example: '66a4b737f8ea2c7d1f1b3aa1'
+  owner:
+    type: string
+    example: '66a49dbcaf423ab2f8483baf'
+  localMonth:
+    type: string
+    example: '05.2024'
+  localDate:
+    type: string
+    example: '23.05.2024'
+  localTime:
+    type: string
+    example: '14:30'
+  waterValue:
+    type: number
+    example: 300
+  createdAt:
+    type: string
+    format: date-time
+    example: '2024-07-27T09:00:39.345Z'
+  updatedAt:
+    type: string
+    format: date-time
+    example: '2024-07-27T09:00:39.345Z'

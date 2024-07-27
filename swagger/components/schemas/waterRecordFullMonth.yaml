@@ -1,0 +1,20 @@
+type: object
+required:
+  - localDate
+properties:
+  localDate:
+    type: string
+    example: '23.05.2024'
+  records:
+    type: array
+    items:
+      $ref: ./record.yaml
+  dailyTotal:
+    type: number
+    example: 2700
+  feasibility:
+    type: number
+    example: 100
+  completed:
+    type: boolean
+    example: true
