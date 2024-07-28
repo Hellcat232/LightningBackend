@@ -5,13 +5,17 @@ import {
   updateWaterRecordIdService,
   deleteWaterRecordIdService,
   getMonthWaterServiceForFront,
+  dateNormalizer,
 } from '../services/water.js';
 
-// Контроллер для добавления записи о воде
 export const addWaterController = async (req, res, next) => {
   try {
     console.log(req.body);
-    const waterRecord = await addWaterService(req.body, req.user);
+    const normalizedDate = dateNormalizer(req.body.localDate);
+    const waterRecord = await addWaterService(
+      { ...req.body, localDate: normalizedDate },
+      req.user,
+    );
 
     res.status(201).json({
       msg: 'CREATED!',
@@ -30,7 +34,6 @@ export const addWaterController = async (req, res, next) => {
   }
 };
 
-// Контроллер для удаления записи о воде
 export const deleteWaterController = async (req, res, next) => {
   try {
     const waterRecord = await deleteWaterRecordIdService(req.water.id);
@@ -51,13 +54,13 @@ export const deleteWaterController = async (req, res, next) => {
   }
 };
 
-// Контроллер для обновления записи о воде
 export const updateWaterController = async (req, res, next) => {
   try {
-    const waterRecord = await updateWaterRecordIdService(
-      req.water.id,
-      req.body,
-    );
+    const normalizedDate = dateNormalizer(req.body.localDate);
+    const waterRecord = await updateWaterRecordIdService(req.water.id, {
+      ...req.body,
+      localDate: normalizedDate,
+    });
 
     res.status(201).json({
       msg: 'UPDATED!',
@@ -75,42 +78,38 @@ export const updateWaterController = async (req, res, next) => {
   }
 };
 
-// Контроллер для получения дневных записей о воде
 export const getDayWaterController = async (req, res, next) => {
   try {
-    const { allWaterRecord, feasibility, completed } = await getDayWaterService(
-      req.body,
+    const normalizedDate = dateNormalizer(
+      req.query.localDate || req.body.localDate,
+    );
+    const waterRecord = await getDayWaterService(
+      { localDate: normalizedDate },
       req.user,
     );
 
     res.status(200).json({
       msg: 'GETED!',
-      waterRate: {
-        feasibility,
-        completed,
-      },
-      waterRecord: allWaterRecord,
+      ...waterRecord,
     });
   } catch (e) {
     next(e);
   }
 };
 
-// Контроллер для получения месячных записей о воде
 export const getMonthWaterController = async (req, res, next) => {
   try {
-    const { localDate } = req.query;
-
-    if (!localDate) {
-      return res.status(400).json({ msg: 'localDate query parameter is required' });
-    }
-
-    console.log('Received localDate:', localDate);
-    const allWaterRecord = await getMonthWaterService(localDate, req.user);
+    const normalizedDate = dateNormalizer(
+      req.query.localDate || req.body.localDate,
+    );
+    const waterRecord = await getMonthWaterService(
+      { localDate: normalizedDate },
+      req.user,
+    );
 
     res.status(200).json({
       msg: 'GETED!',
-      waterRecord: allWaterRecord,
+      ...waterRecord,
     });
   } catch (e) {
     next(e);
@@ -120,13 +119,13 @@ export const getMonthWaterController = async (req, res, next) => {
 export const getMonthWaterForFrontController = async (req, res, next) => {
   try {
     const owner = req.user;
-    const { localDate } = req.query;
-
-    if (!localDate) {
-      return res.status(400).json({ msg: 'localDate query parameter is required' });
+    const date = req.body.localDate || req.query.localDate;
+    if (!date) {
+      throw new Error('localDate is required');
     }
 
-    const { sortedResult, totalWaterDrunk } = await getMonthWaterServiceForFront(localDate, owner);
+    const { sortedResult, totalWaterDrunk } =
+      await getMonthWaterServiceForFront({ localDate: date }, owner);
 
     res.status(200).json({
       msg: 'GETED!',
@@ -134,6 +133,41 @@ export const getMonthWaterForFrontController = async (req, res, next) => {
       waterRecord: sortedResult,
     });
   } catch (e) {
+    console.error('Error in getMonthWaterForFrontController:', e);
+    next(e);
+  }
+};
+
+export const getFullWaterController = async (req, res, next) => {
+  try {
+    const owner = req.user;
+    const date = req.query.localDate || req.body.localDate;    if (!date) {
+      throw new Error('localDate is required');
+    }
+
+    const normalizedDate = dateNormalizer(date);
+
+
+    const dayWaterData = await getDayWaterService(
+      { localDate: normalizedDate },
+      owner,
+    );
+
+
+    const { sortedResult, totalWaterDrunk } =
+      await getMonthWaterServiceForFront({ localDate: normalizedDate }, owner);
+
+
+    res.status(200).json({
+      msg: 'GETED!',
+      dayWaterData,
+      monthWaterData: {
+        sortedResult,
+        totalWaterDrunk,
+      },
+    });
+  } catch (e) {
+    console.error('Error in getFullWaterController:', e);
     next(e);
   }
 };
