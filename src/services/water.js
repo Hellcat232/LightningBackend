@@ -19,6 +19,16 @@ export const localTime = () => {
   return timeString;
 };
 
+<<<<<<< HEAD
+// Преобразует дату в строковом формате, разделенную различными символами (/, \, ., -), в формат с точками
+export const dateNormalizer = (dateString) => {
+  try {
+    const parsedDate = parse(dateString, 'dd-MM-yyyy', new Date());
+    return format(parsedDate, 'dd.MM.yyyy');
+  } catch (error) {
+    console.error('Error normalizing date:', error);
+    return null;
+=======
 export const dateNormalizer = (dateValue) => {
   const parts = dateValue.split(/[\\/.\-]/);
   if (parts.length === 3) {
@@ -27,6 +37,7 @@ export const dateNormalizer = (dateValue) => {
     }`;
   } else {
     throw new Error('Invalid date format');
+>>>>>>> 4c4eb42a8f1831be30630d223f540535f9134487
   }
 };
 
