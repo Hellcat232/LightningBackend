@@ -19,14 +19,14 @@ export const localTime = () => {
   return timeString;
 };
 
-export const dateNormalizer = (dateValue) => {
-  const parts = dateValue.split(/[\\/.\-]/);
-  if (parts.length === 3) {
-    return `${parts[0].padStart(2, '0')}.${parts[1].padStart(2, '0')}.${
-      parts[2]
-    }`;
-  } else {
-    throw new Error('Invalid date format');
+// Преобразует дату в строковом формате, разделенную различными символами (/, \, ., -), в формат с точками
+export const dateNormalizer = (dateString) => {
+  try {
+    const parsedDate = parse(dateString, 'dd-MM-yyyy', new Date());
+    return format(parsedDate, 'dd.MM.yyyy');
+  } catch (error) {
+    console.error('Error normalizing date:', error);
+    return null;
   }
 };
 
