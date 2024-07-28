@@ -1,4 +1,5 @@
 import { Water } from '../db/water.js';
+import { format } from 'date-fns';
 
 // Получает текущую локальную дату в формате строки
 export const localDate = () => {
@@ -23,10 +24,14 @@ export const localTime = () => {
 };
 
 // Преобразует дату в строковом формате, разделенную различными символами (/, \, ., -), в формат с точками
-export const dateNormalizer = (dateValue) => {
-  const arr = dateValue.split(/[\\/.\-]/).join('.');
-
-  return arr;
+export const dateNormalizer = (dateString) => {
+  try {
+    const parsedDate = parse(dateString, 'dd-MM-yyyy', new Date());
+    return format(parsedDate, 'dd.MM.yyyy');
+  } catch (error) {
+    console.error('Error normalizing date:', error);
+    return null;
+  }
 };
 
 //=================================================================================
@@ -99,24 +104,29 @@ export const getDayWaterService = async (date, owner) => {
 
 // Получает все записи о потреблении воды за месяц, группирует их по дате и сортирует по времени в пределах каждой даты
 export const getMonthWaterService = async (date, owner) => {
+  const [day, month, year] = date.split('-');
+  const formattedMonthYear = `${month}-${year}`;
+
   const allWaterRecord = await Water.find({
     owner: owner.id,
-    localMonth: date.localDate.slice(3),
+    localDate: { $regex: `.*${formattedMonthYear}$` }, // Use regex to match any day in the given month and year
   });
 
-  const result = allWaterRecord.reduce((acc, item) => {
-    let key = item.localDate;
+  const groupedByDate = allWaterRecord.reduce((acc, item) => {
+    let recordDate = new Date(item.localDate);
+    let key = `${recordDate.getFullYear()}-${String(recordDate.getMonth() + 1).padStart(2, '0')}-${String(recordDate.getDate()).padStart(2, '0')}`;
+
     if (!acc[key]) {
       acc[key] = [];
     }
+
     acc[key].push(item);
+
     return acc;
   }, {});
 
-  const sortedKeys = Object.keys(result).sort();
-
-  const sortedResult = sortedKeys.map((key) => {
-    const records = result[key].sort((a, b) =>
+  const result = Object.keys(groupedByDate).map(dateKey => {
+    const records = groupedByDate[dateKey].sort((a, b) =>
       a.localTime.localeCompare(b.localTime),
     );
     const dailyTotal = records.reduce(
@@ -126,7 +136,7 @@ export const getMonthWaterService = async (date, owner) => {
     const dailyGoal = Number(owner.waterRate) * 1000;
 
     return {
-      localDate: key,
+      localDate: dateKey,
       records,
       dailyTotal: Math.ceil(dailyTotal),
       feasibility: Math.min(100, Math.ceil((dailyTotal / dailyGoal) * 100)),
@@ -134,17 +144,21 @@ export const getMonthWaterService = async (date, owner) => {
     };
   });
 
-  return sortedResult;
+  return result;
 };
+
 
 // Получает данные для отображения на фронтенде, включая общее количество выпитой воды и проценты выполнения дневных норм
 export const getMonthWaterServiceForFront = async (date, owner) => {
   try {
     console.log('Fetching month water data for', date, owner);
 
+    const [day, month, year] = date.split('-');
+    const formattedMonthYear = `${month}.${year}`;
+
     const allWaterRecord = await Water.find({
       owner: owner.id,
-      localMonth: date.localDate.slice(3),
+      localMonth: formattedMonthYear,
     });
 
     const result = allWaterRecord.reduce((acc, item) => {
@@ -188,6 +202,6 @@ export const getMonthWaterServiceForFront = async (date, owner) => {
     };
   } catch (e) {
     console.error('Error fetching month water data', e);
-    throw e; // Обработка ошибок
+    throw e;
   }
 };

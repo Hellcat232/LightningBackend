@@ -99,7 +99,14 @@ export const getDayWaterController = async (req, res, next) => {
 // Контроллер для получения месячных записей о воде
 export const getMonthWaterController = async (req, res, next) => {
   try {
-    const allWaterRecord = await getMonthWaterService(req.body, req.user);
+    const { localDate } = req.query;
+
+    if (!localDate) {
+      return res.status(400).json({ msg: 'localDate query parameter is required' });
+    }
+
+    console.log('Received localDate:', localDate);
+    const allWaterRecord = await getMonthWaterService(localDate, req.user);
 
     res.status(200).json({
       msg: 'GETED!',
@@ -113,13 +120,14 @@ export const getMonthWaterController = async (req, res, next) => {
 export const getMonthWaterForFrontController = async (req, res, next) => {
   try {
     const owner = req.user;
-    const date = req.body;
+    const { localDate } = req.query;
 
-    // Получаем данные для фронтенда
-    const { sortedResult, totalWaterDrunk } =
-      await getMonthWaterServiceForFront(date, owner);
+    if (!localDate) {
+      return res.status(400).json({ msg: 'localDate query parameter is required' });
+    }
 
-    // Формируем ответ
+    const { sortedResult, totalWaterDrunk } = await getMonthWaterServiceForFront(localDate, owner);
+
     res.status(200).json({
       msg: 'GETED!',
       totalWaterDrunk,
