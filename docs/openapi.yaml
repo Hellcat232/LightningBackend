@@ -47,8 +47,6 @@ paths:
       $ref: ../swagger/paths/water/day/post.yaml
 
   /water/day/{id}:
-    put:
-      $ref: ../swagger/paths/water/day/{id}/put.yaml
     patch:
       $ref: ../swagger/paths/water/day/{id}/patch.yaml
     delete:
