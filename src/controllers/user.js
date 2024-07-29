@@ -1,32 +1,30 @@
+import { catchAsync } from '../utils/catchAsync.js';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { env } from '../utils/env.js';
+import { HttpError } from '../utils/HttpError.js';
 import {
   registerUser,
   loginUserService,
   logoutUserService,
   updateUserService,
 } from '../services/user.js';
-import { catchAsync } from '../utils/catchAsync.js';
-import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
-import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
-import { env } from '../utils/env.js';
-import { HttpError } from '../utils/HttpError.js';
 
-// Функция для создания нового пользователя
 export const createUser = catchAsync(async (req, res) => {
   const { newUser } = await registerUser(req.body);
 
   res.status(201).json({
     user: { email: newUser.email },
+    message: 'User successfully registered.'
   });
 });
 
-// Функция для входа пользователя
 export const loginUser = catchAsync(async (req, res) => {
   const { email, password } = req.body;
   const { user, accessToken, refreshToken, sessionId } = await loginUserService(
     { email, password },
   );
 
-  // Установка cookies
   res.cookie('sessionId', sessionId, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
@@ -52,17 +50,15 @@ export const loginUser = catchAsync(async (req, res) => {
     },
     accessToken,
     refreshToken,
+    message: 'Login successful.'
   });
 });
 
-
-// Функция для выхода пользователя
 export const logoutUser = catchAsync(async (req, res) => {
   const id = req.userId;
 
   await logoutUserService(id);
 
-  // Удаление cookies
   res.clearCookie('sessionId', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
@@ -76,10 +72,11 @@ export const logoutUser = catchAsync(async (req, res) => {
     path: '/',
   });
 
-  res.sendStatus(204);
+  res.sendStatus(204).json({
+    message: 'User successfully logged out.'
+  });
 });
 
-// Функция для получения текущего пользователя
 export const currentUser = (req, res) => {
   const currentUser = req.user;
 
@@ -93,12 +90,10 @@ export const currentUser = (req, res) => {
       sportsActivity: currentUser.sportsActivity,
       waterRate: currentUser.waterRate,
     },
+    message: 'Current user data retrieved successfully.'
   });
 };
 
-
-
-// Функция для обновления данных пользователя
 export const updateUser = catchAsync(async (req, res) => {
   const avatar = req.file;
 
@@ -118,7 +113,7 @@ export const updateUser = catchAsync(async (req, res) => {
   });
 
   if (!result) {
-    throw new HttpError('User not found', 404);
+    throw new HttpError('404', 'User not found. Unable to update user data.');
   }
 
   res.status(200).json({
@@ -131,10 +126,10 @@ export const updateUser = catchAsync(async (req, res) => {
       sportsActivity: result.user.sportsActivity,
       waterRate: result.user.waterRate,
     },
+    message: 'User data updated successfully.'
   });
 });
 
-// Функция для обновления токенов пользователя
 export const refreshUser = (req, res) => {
   const { refreshToken, accessToken, currentUserRef } = req;
 
@@ -150,6 +145,6 @@ export const refreshUser = (req, res) => {
       sportsActivity: currentUserRef.sportsActivity,
       waterRate: currentUserRef.waterRate,
     },
+    message: 'Tokens refreshed successfully.'
   });
 };
-

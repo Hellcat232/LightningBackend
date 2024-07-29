@@ -26,13 +26,12 @@ export const registerUser = async (userData) => {
 
 export const loginUserService = async ({ email, password }) => {
   const user = await User.findOne({ email });
-  if (!user) throw createHttpError(401, 'Email or password is wrong');
+  if (!user) throw new HttpError(401, 'Email or password is wrong');
 
   const passwordIsValid = await bcrypt.compare(password, user.password);
-  if (!passwordIsValid)
-    throw createHttpError(401, 'Email or password is wrong');
+  if (!passwordIsValid) throw new HttpError(401, 'Email or password is wrong');
 
-  // Remove all previous sessions
+  // Удаление всех предыдущих сессий
   await SessionsCollection.deleteMany({ userId: user._id });
 
   const accessToken = signToken(
@@ -64,13 +63,10 @@ export const loginUserService = async ({ email, password }) => {
     sessionId,
   };
 };
-// Get user by ID
 export const getUserByIdService = (id) => {
   return User.findById(id);
 };
 
-// Log out user
-// Log out user
 export const logoutUserService = async (userId) => {
   try {
     const user = await User.findById(userId);
