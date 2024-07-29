@@ -1,5 +1,3 @@
-// services/water.js
-
 import { Water } from '../db/water.js';
 
 export const localDate = () => {
@@ -25,11 +23,13 @@ export const dateNormalizer = (dateValue) => {
     return `${parts[0].padStart(2, '0')}.${parts[1].padStart(2, '0')}.${
       parts[2]
     }`;
+  } else if (parts.length === 2) {
+    return `${parts[0].padStart(2, '0')}.${parts[1]}`;
   } else {
     throw new Error('Invalid date format');
-
   }
 };
+
 
 export const addWaterService = async (waterData, owner) => {
   const normalizedDate = dateNormalizer(waterData.localDate);
@@ -140,44 +140,51 @@ export const getMonthWaterService = async (date, owner) => {
 export const getMonthWaterServiceForFront = async (date, owner) => {
   try {
     const normalizedDate = dateNormalizer(date.localDate);
-    const allWaterRecord = await Water.find({
+    const isMonthOnly = normalizedDate.length === 7; // e.g., "03.2024"
+
+    let query = {
       owner: owner.id,
-      localMonth: normalizedDate.slice(3),
-    });
+    };
+
+    if (isMonthOnly) {
+      query.localMonth = normalizedDate;
+    } else {
+      query.localDate = normalizedDate;
+    }
+
+    const allWaterRecord = await Water.find(query);
+
+    const dailyGoal = Number(owner.waterRate) * 1000;
+    const totalWaterDrunk = allWaterRecord.reduce(
+      (sum, record) => sum + (record.waterValue || 0),
+      0,
+    );
 
     const result = allWaterRecord.reduce((acc, item) => {
-      let key = item.localDate;
+      const key = item.localDate;
       if (!acc[key]) {
-        acc[key] = [];
+        acc[key] = 0;
       }
-      acc[key].push(item);
+      acc[key] += item.waterValue || 0;
       return acc;
     }, {});
 
     const sortedKeys = Object.keys(result).sort();
     const sortedResult = sortedKeys.map((key) => {
-      const records = result[key].sort((a, b) =>
-        a.localTime.localeCompare(b.localTime),
+      const dailyTotal = result[key];
+      const feasibility = Math.min(
+        100,
+        Math.ceil((dailyTotal / dailyGoal) * 100),
       );
-      const dailyTotal = records.reduce(
-        (sum, record) => sum + (record.waterValue || 0),
-        0,
-      );
-      const dailyGoal = Number(owner.waterRate) * 1000;
+      const completed = dailyTotal >= dailyGoal;
 
       return {
         localDate: key,
-        records,
         dailyTotal: Math.ceil(dailyTotal),
-        feasibility: Math.min(100, Math.ceil((dailyTotal / dailyGoal) * 100)),
-        completed: dailyTotal >= dailyGoal,
+        feasibility,
+        completed,
       };
     });
-
-    const totalWaterDrunk = allWaterRecord.reduce(
-      (sum, record) => sum + (record.waterValue || 0),
-      0,
-    );
 
     return {
       sortedResult,

@@ -45,12 +45,12 @@ export const checkIdMiddleware = async (req, res, next) => {
 export const checkAllWaterDataMiddleware = async (req, res, next) => {
   try {
     const localDate = req.body.localDate || req.query.localDate;
-    console.log('localDate from request:', localDate); // Логирование для проверки значения localDate
+    console.log('localDate from request:', localDate);
     if (!localDate) {
       throw new HttpError(400, 'localDate is required');
     }
 
-    req.body.localDate = localDate; // Убедимся, что localDate присутствует в теле запроса
+    req.body.localDate = localDate;
     next();
   } catch (e) {
     next(e);
