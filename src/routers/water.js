@@ -20,7 +20,6 @@ waterRouter.post('/day', checkWaterDataMiddleware, addWaterController);
 waterRouter.use('/day/:id', checkIdMiddleware);
 waterRouter
   .route('/day/:id')
-  .put(checkWaterDataMiddleware, updateWaterController)
   .patch(checkWaterDataMiddleware, updateWaterController)
   .delete(deleteWaterController);
 waterRouter.get('/fullDay', checkAllWaterDataMiddleware, getDayWaterController);

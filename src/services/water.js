@@ -56,12 +56,12 @@ export const deleteWaterRecordIdService = async (id) => {
 export const updateWaterRecordIdService = async (id, waterData) => {
   const normalizedDate = dateNormalizer(waterData.localDate);
   const localMonth = normalizedDate.slice(3);
-  const waterRecord = await Water.findByIdAndUpdate(
+  const updatedRecord = await Water.findByIdAndUpdate(
     id,
     { ...waterData, localDate: normalizedDate, localMonth },
     { new: true },
   );
-  return waterRecord;
+  return updatedRecord;
 };
 
 export const getDayWaterService = async (date, owner) => {
@@ -72,6 +72,7 @@ export const getDayWaterService = async (date, owner) => {
       localDate: normalizedDate,
     });
 
+    // Ensure the updated records are included in the result
     let totalDay = allWaterRecord.reduce(
       (sum, record) => sum + (record.waterValue || 0),
       0,
@@ -92,6 +93,7 @@ export const getDayWaterService = async (date, owner) => {
     throw e;
   }
 };
+
 
 export const getMonthWaterService = async (date, owner) => {
   try {

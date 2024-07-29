@@ -69,8 +69,6 @@ export const getUserByIdService = (id) => {
   return User.findById(id);
 };
 
-// Log out user
-// Log out user
 export const logoutUserService = async (userId) => {
   try {
     const user = await User.findById(userId);
