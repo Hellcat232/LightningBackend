@@ -2,7 +2,6 @@ import { Router } from 'express';
 import {
   addWaterController,
   getDayWaterController,
-  getMonthWaterController,
   updateWaterController,
   deleteWaterController,
   getMonthWaterForFrontController,
@@ -30,6 +29,6 @@ waterRouter.get(
   '/fullMonth',
   checkAllWaterDataMiddleware,
   getMonthWaterForFrontController,
-  getMonthWaterController,
 );
+
 export default waterRouter;
