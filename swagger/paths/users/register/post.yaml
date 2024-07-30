@@ -3,8 +3,7 @@ tags:
 summary: Register user
 operationId: registerUser
 description: 'Register user with this endpoint'
-security:
-  - bearerAuth: []
+security: []
 requestBody:
   content:
     application/json:

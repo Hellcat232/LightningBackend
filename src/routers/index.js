@@ -6,7 +6,7 @@ import authRouter from './auth.js';
 const router = Router();
 
 router.use('/auth', authRouter);
-router.use('/user', usersRouter);
+router.use('/users', usersRouter);
 router.use('/water', waterRouter);
 
 export default router;
