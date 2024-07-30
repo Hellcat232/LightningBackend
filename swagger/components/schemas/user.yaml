@@ -1,5 +1,5 @@
 type: object
-required: 
+required:
   - name
   - email
 properties:
@@ -13,16 +13,16 @@ properties:
   gender:
     type: string
     enum:
-      - Male
-      - Female
-    example: Male
+      - woman
+      - man
+    example: woman
   avatar:
     type: string
   weight:
     type: string
-    example: "70"
+    example: '70'
   sportsActivity:
     type: string
   waterRate:
     type: string
-    example: "1.5"
+    example: '1.5'
