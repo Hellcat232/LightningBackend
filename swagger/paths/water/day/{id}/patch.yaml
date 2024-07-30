@@ -3,7 +3,7 @@ tags:
 summary: Partially update a water record by ID
 operationId: patchDayWater
 security:
-- bearerAuth: []
+  - bearerAuth: []
 parameters:
   - in: path
     name: id
@@ -20,6 +20,9 @@ requestBody:
           waterValue:
             type: number
             example: 600
+          localTime:
+            type: string
+            example: '14:30'
 responses:
   201:
     description: Updated

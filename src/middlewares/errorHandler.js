@@ -1,18 +1,13 @@
-import { HttpError } from 'http-errors';
+import { HttpError } from '../utils/HttpError.js';
 
 export const errorHandler = (err, req, res, next) => {
-  console.error('Unhandled Error:', err); 
+  console.error(err.stack); 
 
-  if (err instanceof HttpError) {
-    return res.status(err.status).json({
-      status: err.status,
-      message: err.message || 'An error occurred',
+  const statusCode = err.status || 500;
+  const message = err.message || 'Internal Server Error';
 
-    });
-  }
-
-  res.status(500).json({
-    message: 'Something went wrong',
-    error: err.message,
+  res.status(statusCode).json({
+    message,
+    error: err.details || 'No additional details'
   });
 };

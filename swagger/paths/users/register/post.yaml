@@ -2,17 +2,14 @@ tags:
   - User
 summary: Register user
 operationId: registerUser
-description: "Register user with this endpoint"
+description: 'Register user with this endpoint'
 security: []
-requestBody: 
-  content: 
+requestBody:
+  content:
     application/json:
       schema:
         type: object
         properties:
-          name: 
-            type: string
-            example: Jon Doe
           email:
             type: string
             format: email
@@ -31,15 +28,15 @@ responses:
             - status
             - user
           properties:
-              status:
-                type: integer
-                example: 201
-              user: 
-                type: object
-                properties:
-                  email:
-                    type: string
-                    format: email
-                    example: userExample@gmail.com
+            status:
+              type: integer
+              example: 201
+            user:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: userExample@gmail.com
   '400':
     description: Invalid request body

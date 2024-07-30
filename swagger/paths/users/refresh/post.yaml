@@ -2,8 +2,8 @@ tags:
   - User
 summary: Refresh user's tokens
 operationId: refreshUser
-description: "Refresh access and refresh tokens"
-security: 
+description: 'Refresh access and refresh tokens'
+security:
   - bearerAuth: []
 requestBody:
   content:
@@ -34,6 +34,9 @@ responses:
             refreshToken:
               type: string
               example: efJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ8.eyJpZCI6IjY2OWE3NzRkMDYzYjM2ZjJhMjNmODIyYyIsImlhdCI7MTYyMTU5OTY1MCwiZXhwIjoxNzIxNjAzMjUwfQ.znG4iJzCsVkapp4v8lvKaUtNBtHZ6fbHGzIn9FIrrjg
+            sessionId:
+              type: string
+              example: mkkl6dD9zekaY4LFw25z5sy7wYrJo3RLyso+A31y
             user:
               type: object
               $ref: ../../../components/schemas/user.yaml

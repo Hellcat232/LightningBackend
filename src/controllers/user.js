@@ -1,28 +1,42 @@
+import { catchAsync } from '../utils/catchAsync.js';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { env } from '../utils/env.js';
+import { HttpError } from '../utils/HttpError.js';
 import {
   registerUser,
   loginUserService,
   logoutUserService,
   updateUserService,
 } from '../services/user.js';
-import { catchAsync } from '../utils/catchAsync.js';
-import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
-import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
-import { env } from '../utils/env.js';
-import { HttpError } from '../utils/HttpError.js';
 
-
-// Функция для создания нового пользователя
 export const createUser = catchAsync(async (req, res) => {
   const { newUser } = await registerUser(req.body);
 
   res.status(201).json({
     user: { email: newUser.email },
+    message: 'User successfully registered.'
   });
 });
 
-// Функция для входа пользователя
 export const loginUser = catchAsync(async (req, res) => {
-  const { user, accessToken, refreshToken } = await loginUserService(req.body);
+  const { email, password } = req.body;
+  const { user, accessToken, refreshToken, sessionId } = await loginUserService(
+    { email, password },
+  );
+
+  res.cookie('sessionId', sessionId, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'None',
+    path: '/',
+  });
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'None',
+    path: '/',
+  });
 
   res.status(200).json({
     user: {
@@ -36,19 +50,33 @@ export const loginUser = catchAsync(async (req, res) => {
     },
     accessToken,
     refreshToken,
+    message: 'Login successful.'
   });
 });
 
-// Функция для выхода пользователя
 export const logoutUser = catchAsync(async (req, res) => {
   const id = req.userId;
 
   await logoutUserService(id);
 
-  res.sendStatus(204);
+  res.clearCookie('sessionId', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'None',
+    path: '/',
+  });
+  res.clearCookie('refreshToken', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'None',
+    path: '/',
+  });
+
+  res.sendStatus(204).json({
+    message: 'User successfully logged out.'
+  });
 });
 
-// Функция для получения текущего пользователя
 export const currentUser = (req, res) => {
   const currentUser = req.user;
 
@@ -61,30 +89,31 @@ export const currentUser = (req, res) => {
       weight: currentUser.weight,
       sportsActivity: currentUser.sportsActivity,
       waterRate: currentUser.waterRate,
-    }
+    },
+    message: 'Current user data retrieved successfully.'
   });
 };
 
-// Функция для обновления данных пользователя
-export const updateUser = async (req, res) => {
+export const updateUser = catchAsync(async (req, res) => {
   const avatar = req.file;
 
   let avatarUrl;
 
   if (avatar) {
-      if (env('ENABLE_CLOUDINARY') === 'true') {
-          avatarUrl = await saveFileToCloudinary(avatar);
-      } else {
-          avatarUrl = await saveFileToUploadDir(avatar);
-      }
+    if (env('ENABLE_CLOUDINARY') === 'true') {
+      avatarUrl = await saveFileToCloudinary(avatar);
+    } else {
+      avatarUrl = await saveFileToUploadDir(avatar);
+    }
   }
+
   const result = await updateUserService(req.user._id, {
     ...req.body,
     avatar: avatarUrl,
   });
 
-  if(!result) {
-    throw HttpError(404, "User not found");
+  if (!result) {
+    throw new HttpError('404', 'User not found. Unable to update user data.');
   }
 
   res.status(200).json({
@@ -96,11 +125,11 @@ export const updateUser = async (req, res) => {
       weight: result.user.weight,
       sportsActivity: result.user.sportsActivity,
       waterRate: result.user.waterRate,
-    }
+    },
+    message: 'User data updated successfully.'
   });
-};
+});
 
-// Функция для обновления токенов пользователя
 export const refreshUser = (req, res) => {
   const { refreshToken, accessToken, currentUserRef } = req;
 
@@ -116,5 +145,6 @@ export const refreshUser = (req, res) => {
       sportsActivity: currentUserRef.sportsActivity,
       waterRate: currentUserRef.waterRate,
     },
+    message: 'Tokens refreshed successfully.'
   });
 };
