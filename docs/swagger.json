@@ -44,6 +44,10 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Jon Doe"
+                  },
                   "email": {
                     "type": "string",
                     "format": "email",
@@ -222,10 +226,18 @@
                   "gender": {
                     "type": "string",
                     "enum": [
+<<<<<<< HEAD
                       "woman",
                       "man"
                     ],
                     "example": "woman"
+=======
+                      "female",
+                      "male",
+                      "woman"
+                    ],
+                    "example": "male"
+>>>>>>> parent of 738259a (Merge branch 'main' into pr/38)
                   },
                   "avatar": {
                     "type": "string",
@@ -422,14 +434,6 @@
                   "waterValue": {
                     "type": "number",
                     "example": 250
-                  },
-                  "localDate": {
-                    "type": "string",
-                    "example": "23.05.2024"
-                  },
-                  "localTime": {
-                    "type": "string",
-                    "example": "14:30"
                   }
                 }
               }
@@ -449,7 +453,8 @@
                       "example": "CREATED!"
                     },
                     "waterRecord": {
-                      "$ref": "#/components/schemas/waterRecordAdd"
+                      "type": "object",
+                      "$ref": "#/components/schemas/water"
                     }
                   }
                 }
@@ -466,6 +471,72 @@
       }
     },
     "/water/day/{id}": {
+      "put": {
+        "tags": [
+          "Water"
+        ],
+        "summary": "Update a water record by ID",
+        "operationId": "putDayWater",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "waterValue": {
+                    "type": "number",
+                    "example": 500
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "example": "UPDATED!"
+                    },
+                    "waterRecord": {
+                      "type": "object",
+                      "$ref": "#/components/schemas/water"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
       "patch": {
         "tags": [
           "Water"
@@ -497,10 +568,6 @@
                   "waterValue": {
                     "type": "number",
                     "example": 600
-                  },
-                  "localTime": {
-                    "type": "string",
-                    "example": "14:30"
                   }
                 }
               }
@@ -606,7 +673,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "example": "27.07.2024"
+              "example": "2024-07-24"
             }
           }
         ],
@@ -710,7 +777,11 @@
             "required": true,
             "schema": {
               "type": "string",
+<<<<<<< HEAD
               "example": "05.2024"
+=======
+              "example": "2024-07-24"
+>>>>>>> parent of 738259a (Merge branch 'main' into pr/38)
             }
           }
         ],
@@ -726,15 +797,54 @@
                       "type": "string",
                       "example": "GETED!"
                     },
+                    "waterRecord": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "_id": {
+                              "type": "string",
+                              "example": "66a0d6dfbb254e5308c48e80"
+                            },
+                            "owner": {
+                              "type": "string",
+                              "example": "669fb9997871c8f7eeea3db4"
+                            },
+                            "localMonth": {
+                              "type": "string",
+                              "example": "07.2024"
+                            },
+                            "localDate": {
+                              "type": "string",
+                              "example": "24.07.2024"
+                            },
+                            "waterValue": {
+                              "type": "number",
+                              "example": 600
+                            },
+                            "localTime": {
+                              "type": "string",
+                              "example": "12:26"
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "example": "2024-07-24T10:26:39.165Z"
+                            },
+                            "updatedAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "example": "2024-07-24T10:29:15.693Z"
+                            }
+                          }
+                        }
+                      }
+                    },
                     "totalWaterDrunk": {
                       "type": "number",
-                      "example": 2700
-                    },
-                    "waterRecord": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/waterRecordFullMonth"
-                      }
+                      "example": 1800
                     }
                   }
                 }
@@ -778,10 +888,17 @@
           "gender": {
             "type": "string",
             "enum": [
+<<<<<<< HEAD
               "woman",
               "man"
             ],
             "example": "woman"
+=======
+              "Male",
+              "Female"
+            ],
+            "example": "Male"
+>>>>>>> parent of 738259a (Merge branch 'main' into pr/38)
           },
           "avatar": {
             "type": "string"
@@ -799,9 +916,10 @@
           }
         }
       },
-      "owner": {
+      "water": {
         "type": "object",
         "required": [
+<<<<<<< HEAD
           "_id",
           "email",
           "name",
@@ -885,6 +1003,8 @@
         "required": [
           "_id",
           "localMonth",
+=======
+>>>>>>> parent of 738259a (Merge branch 'main' into pr/38)
           "localDate",
           "localTime",
           "waterValue",
@@ -893,6 +1013,7 @@
         "properties": {
           "_id": {
             "type": "string",
+<<<<<<< HEAD
             "example": "66a5012643030e5ea5cd37bf"
           },
           "localMonth": {
@@ -927,6 +1048,8 @@
         "properties": {
           "_id": {
             "type": "string",
+=======
+>>>>>>> parent of 738259a (Merge branch 'main' into pr/38)
             "example": "60d0fe4f5311236168a109ca"
           },
           "localMonth": {
@@ -935,7 +1058,7 @@
           },
           "localDate": {
             "type": "string",
-            "example": "23.05.2024"
+            "example": "2024-07-24"
           },
           "localTime": {
             "type": "string",
@@ -950,6 +1073,7 @@
             "example": "60d0fe4f5311236168a109cb"
           }
         }
+<<<<<<< HEAD
       },
       "record": {
         "type": "object",
@@ -1019,6 +1143,8 @@
             "example": true
           }
         }
+=======
+>>>>>>> parent of 738259a (Merge branch 'main' into pr/38)
       }
     }
   }

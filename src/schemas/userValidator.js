@@ -8,9 +8,6 @@ export const registerUserSchema = joiValidator((data) =>
     .keys({
       email: Joi.string().email().required(),
       password: Joi.string().required(),
-      gender: Joi.string()
-        .valid(...Object.values(userGender))
-        .optional(),
     })
     .validate(data),
 );
@@ -31,9 +28,7 @@ export const updateUserValidator = joiValidator((data) =>
     .keys({
       name: Joi.string().min(2).max(30).allow('').optional(),
       email: Joi.string().email().optional(),
-      gender: Joi.string()
-        .valid(...Object.values(userGender))
-        .optional(),
+      gender: Joi.string().valid(...Object.values(userGender)).optional(),
       weight: Joi.string().allow('').optional(),
       sportsActivity: Joi.string().allow('').optional(),
       waterRate: Joi.string().allow('').optional(),
@@ -41,7 +36,6 @@ export const updateUserValidator = joiValidator((data) =>
     })
     .validate(data),
 );
-
 
 export const refreshUserValidator = joiValidator((data) =>
   Joi.object()

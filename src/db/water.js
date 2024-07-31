@@ -7,17 +7,17 @@ const waterSchema = new Schema(
     owner: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: true, // Обязательное поле, ссылка на пользователя
+      required: true,  // Обязательное поле, ссылка на пользователя
     },
-    localMonth: { type: String }, // Поле для хранения месяца
-    localDate: { type: String, default: () => localDate() }, // Поле для хранения даты с значением по умолчанию
-    localTime: { type: String, default: () => localTime() }, // Поле для хранения времени с значением по умолчанию
-    waterValue: { type: Number, required: [true, 'waterValue is required'] }, // Обязательное поле для хранения количества выпитой воды
-    totalWaterDrunk: { type: Number }, // Поле для хранения общего количества выпитой воды
+    localMonth: { type: String },  // Поле для хранения месяца
+    localDate: { type: String, default: () => localDate() },  // Поле для хранения даты с значением по умолчанию
+    localTime: { type: String, default: () => localTime() },  // Поле для хранения времени с значением по умолчанию
+    waterValue: { type: Number, required: [true, 'waterValue is required'] },  // Обязательное поле для хранения количества выпитой воды
+    totalWaterDrunk: { type: Number },  // Поле для хранения общего количества выпитой воды
   },
   {
-    timestamps: true, // Автоматическое добавление полей createdAt и updatedAt
-    versionKey: false, // Отключение версии документа (__v)
+    timestamps: true,  // Автоматическое добавление полей createdAt и updatedAt
+    versionKey: false,  // Отключение версии документа (__v)
   },
 );
 

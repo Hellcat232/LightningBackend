@@ -4,13 +4,12 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import passport from 'passport';
 import session from 'express-session';
-import cookieParser from 'cookie-parser'; // Импорт cookie-parser
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import router from './routers/index.js';
+import { UPLOAD_DIR } from './constants/avatar.js';
 import authRouter from './routers/auth.js';
 import { swaggerDocs } from './middlewares/swaggerDocs.js';
-import { checkSessionId } from './middlewares/sessionMiddleware.js'; // Импорт нового middleware
 
 dotenv.config();
 
@@ -21,7 +20,6 @@ const PORT = Number(env('PORT', '3000'));
 export const startServer = () => {
   const app = express();
 
-  app.use(cookieParser()); // Использование cookie-parser
   app.use(express.json());
 
   app.use(
@@ -43,12 +41,13 @@ export const startServer = () => {
     }),
   );
 
+  app.use('/uploads', express.static(UPLOAD_DIR));
+
   app.use(
     session({
       secret: process.env.SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
-      cookie: { secure: process.env.NODE_ENV === 'production' },
     }),
   );
 
@@ -56,10 +55,8 @@ export const startServer = () => {
   app.use(passport.session());
 
   app.use('/auth', authRouter);
+  
   app.use('/api-docs', swaggerDocs());
-
-  // Использование middleware для проверки sessionId
-  app.use(checkSessionId);
 
   app.use(router);
 

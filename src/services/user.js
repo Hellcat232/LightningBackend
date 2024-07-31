@@ -1,105 +1,81 @@
 import { User } from '../db/user.js';
-import { SessionsCollection } from '../db/session.js';
-import { generateSessionId } from '../utils/generateSessionId.js';
-import { signToken } from './jwtServices.js';
-import bcrypt from 'bcrypt';
-import createHttpError from 'http-errors';
 import { HttpError } from '../utils/HttpError.js';
+import { signToken } from './jwtServices.js';
 
-// Check if user exists
+// Проверяет, существует ли пользователь, соответствующий заданному фильтру
 export const checkUserExistsService = (filter) => {
   return User.exists(filter);
 };
-
-// Register a new user
+// Регистрирует нового пользователя, создавая имя на основе email и сохраняя пользователя в базе данных
 export const registerUser = async (userData) => {
   const email = userData.email;
+  // Извлекает имя из email и делает первую букву заглавной
   let name = email.split('@')[0];
+
   name = name.charAt(0).toUpperCase() + name.slice(1);
 
   userData.name = name;
-  userData.sessionId = generateSessionId();
+  // Создает нового пользователя в базе данных
   const newUser = await User.create(userData);
 
   return { newUser };
 };
-
+// Выполняет вход пользователя, проверяя правильность email и пароля, и возвращает токены
 export const loginUserService = async ({ email, password }) => {
   const user = await User.findOne({ email });
-  if (!user) throw new HttpError(401, 'Email or password is wrong');
 
-  const passwordIsValid = await bcrypt.compare(password, user.password);
-  if (!passwordIsValid) throw new HttpError(401, 'Email or password is wrong');
+  if (!user) throw HttpError(401, 'Email or password is wrong');
 
-  // Удаление всех предыдущих сессий
-  await SessionsCollection.deleteMany({ userId: user._id });
+  // Проверяет корректность пароля
 
+  const passwordIsValid = await user.checkUserPassword(password, user.password);
+
+  if (!passwordIsValid) throw HttpError(401, 'Email or password is wrong');
+  // Генерирует токены для доступа и обновления
   const accessToken = signToken(
-    user._id,
+    user.id,
     process.env.ACCESS_SECRET_KEY,
     process.env.ACCESS_EXPIRES_IN,
   );
+
   const refreshToken = signToken(
-    user._id,
+    user.id,
     process.env.REFRESH_SECRET_KEY,
     process.env.REFRESH_EXPIRES_IN,
   );
+  // Сохраняет токены в базе данных
+  user.accessToken = accessToken;
+  user.refreshToken = refreshToken;
+  await user.save();
 
-  const sessionId = generateSessionId();
-
-  await SessionsCollection.create({
-    userId: user._id,
-    accessToken,
-    refreshToken,
-    accessTokenValidUntil: new Date(Date.now() + 15 * 60 * 1000),
-    refreshTokenValidUntil: new Date(Date.now() + 24 * 60 * 60 * 1000),
-    sessionId,
-  });
-
-  return {
-    user,
-    accessToken,
-    refreshToken,
-    sessionId,
-  };
+  return { user, accessToken, refreshToken };
 };
+// Получает пользователя по идентификатору
 export const getUserByIdService = (id) => {
   return User.findById(id);
 };
-
+// Выполняет выход пользователя, очищая токены доступа и обновления
 export const logoutUserService = async (userId) => {
-  try {
-    const user = await User.findById(userId);
+  const user = await User.findById(userId);
 
-    if (!user) {
-      throw new HttpError('Unauthorized', 401);
-    }
-
-    // Очистка всех сессий пользователя
-    await SessionsCollection.deleteMany({ userId });
-
-    // Дополнительно очищаем токены у пользователя (если это необходимо)
-    user.accessToken = null;
-    user.refreshToken = null;
-
-    await user.save();
-  } catch (error) {
-    console.error('Error during logout:', error);
-    throw new HttpError('Internal server error', 500);
+  if (!user) {
+    throw HttpError(401, 'Unauthorized');
   }
+
+  user.accessToken = null;
+  user.refreshToken = null;
+
+  await user.save();
 };
-
-
-// Update user data
+// Обновляет данные пользователя, удаляя свойства с неопределенными или пустыми значениями
 export const updateUserService = async (userId, payload, options = {}) => {
-  // Remove properties from payload if undefined or empty
+  // Удаляет свойства из payload, если их значение неопределено или пусто
   Object.keys(payload).forEach(
     (key) =>
       (payload[key] === undefined || payload[key] === '') &&
       delete payload[key],
   );
-
-  // Find and update user by ID
+  // Находит и обновляет пользователя по идентификатору, возвращает обновленного пользователя и информацию о том, был ли он создан новый
   const rawResult = await User.findOneAndUpdate({ _id: userId }, payload, {
     new: true,
     includeResultMetadata: true,

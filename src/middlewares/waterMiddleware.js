@@ -1,23 +1,30 @@
 import { Types } from 'mongoose';
+
 import { HttpError } from '../utils/HttpError.js';
 import { checkWaterValidator } from '../schemas/waterValidator.js';
-import { dateNormalizer, localDate } from '../services/water.js';
+import { checkAllWaterValidator } from '../schemas/waterValidator.js';
+import { dateNormalizer } from '../services/water.js';
+import { localDate } from '../services/water.js';
 import { getWaterRecordIdService } from '../services/water.js';
 
 export const checkWaterDataMiddleware = (req, res, next) => {
   try {
+    // Валидация данных воды
     const { value, err } = checkWaterValidator(req.body);
     if (err) throw HttpError(400, 'Bad Request', err);
 
     console.log(value);
 
+    // Нормализация даты, если она присутствует
     if (value.localDate) {
       const localDate = dateNormalizer(value.localDate);
       req.body = { ...value, localDate };
       return next();
     }
 
+    // Установка текущей даты, если она не предоставлена
     req.body = { ...value, localDate: localDate() };
+
     next();
   } catch (e) {
     next(e);
@@ -27,15 +34,19 @@ export const checkWaterDataMiddleware = (req, res, next) => {
 export const checkIdMiddleware = async (req, res, next) => {
   try {
     const { id } = req.params;
+
+    // Проверка валидности ID
     const isIdValid = Types.ObjectId.isValid(id);
     if (!isIdValid) throw HttpError(404, 'Not Found');
 
+    // Проверка существования записи о воде и права доступа
     const waterRecord = await getWaterRecordIdService(id);
 
     if (!waterRecord || waterRecord.owner.toString() !== req.user.id)
       throw HttpError(404, 'Not Found');
 
     req.water = waterRecord;
+
     next();
   } catch (e) {
     next(e);
@@ -44,13 +55,20 @@ export const checkIdMiddleware = async (req, res, next) => {
 
 export const checkAllWaterDataMiddleware = async (req, res, next) => {
   try {
-    const localDate = req.body.localDate || req.query.localDate;
-    console.log('localDate from request:', localDate);
-    if (!localDate) {
-      throw new HttpError(400, 'localDate is required');
+    // Валидация данных для получения всех записей о воде
+    const { value, err } = checkAllWaterValidator(req.body);
+    if (err) throw HttpError(400, 'Bad Request', err);
+
+    // Нормализация даты, если она присутствует
+    if (value.localDate) {
+      const localDate = dateNormalizer(value.localDate);
+      req.body = { localDate };
+      return next();
     }
 
-    req.body.localDate = localDate;
+    // Установка текущей даты, если она не предоставлена
+    req.body = { localDate: localDate() };
+
     next();
   } catch (e) {
     next(e);

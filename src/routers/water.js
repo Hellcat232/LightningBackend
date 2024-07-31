@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   addWaterController,
   getDayWaterController,
+  getMonthWaterController,
   updateWaterController,
   deleteWaterController,
   getMonthWaterForFrontController,
@@ -20,14 +21,23 @@ waterRouter.post('/day', checkWaterDataMiddleware, addWaterController);
 waterRouter.use('/day/:id', checkIdMiddleware);
 waterRouter
   .route('/day/:id')
+  .put(checkWaterDataMiddleware, updateWaterController)
   .patch(checkWaterDataMiddleware, updateWaterController)
   .delete(deleteWaterController);
+waterRouter.post(
+  '/fullDay',
+  checkAllWaterDataMiddleware,
+  getDayWaterController,
+);
 waterRouter.get('/fullDay', checkAllWaterDataMiddleware, getDayWaterController);
-
+waterRouter.post(
+  '/fullMonth',
+  checkAllWaterDataMiddleware,
+  getMonthWaterController,
+);
 waterRouter.get(
   '/fullMonth',
   checkAllWaterDataMiddleware,
   getMonthWaterForFrontController,
 );
-
 export default waterRouter;
