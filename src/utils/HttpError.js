@@ -3,7 +3,7 @@ class HttpError extends Error {
     super(message || messageList[status]);
     this.status = status;
     this.name = this.constructor.name; // Устанавливаем имя ошибки
-    Error.captureStackTrace(this, this.constructor); // Сохраняем стек вызовов
+    Error.captureStackTrace(this, this.constructor); // Сохраняем стек вызовов11
   }
 }
 
