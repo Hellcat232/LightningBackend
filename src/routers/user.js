@@ -24,6 +24,12 @@ usersRouter.post('/login', checkLogInData, loginUser);
 usersRouter.post('/logout', protect, logoutUser);
 usersRouter.post('/refresh', checkRefreshData, refreshUserData, refreshUser);
 usersRouter.get('/current', protect, currentUser);
-usersRouter.patch('/update', upload.single('avatar'), protect, checkUpdateUserData, updateUser);
+usersRouter.patch(
+  '/update',
+  upload.single('avatar'),
+  protect,
+  checkUpdateUserData,
+  updateUser,
+);
 
 export default usersRouter;

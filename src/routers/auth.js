@@ -37,6 +37,10 @@ authRouter.post('/google', async (req, res) => {
     if (!user) {
       user = new User({ googleId: sub, email, name, avatar: picture });
       await user.save();
+    } else {
+      // Якщо у юзера є токен то ми його видаляємо
+      user.accessToken = null;
+      user.refreshToken = null;
     }
 
     const accessToken = signToken(user.id, process.env.ACCESS_SECRET_KEY, '1h');
