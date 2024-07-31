@@ -18,7 +18,7 @@ export const checkCreateUserData = catchAsync(async (req, res, next) => {
   const { value, err } = registerUserSchema(req.body);
 
   if (err)
-    throw HttpError(
+    throw new HttpError(
       401,
       'Invalid registration data. Please check your input and try again.',
       err,
@@ -27,7 +27,10 @@ export const checkCreateUserData = catchAsync(async (req, res, next) => {
   const userExists = await checkUserExistsService({ email: value.email });
 
   if (userExists)
-    throw HttpError(409, 'Email already in use. Please choose another email.');
+    throw new HttpError(
+      409,
+      'Email already in use. Please choose another email.',
+    );
 
   req.body = value;
   next();
@@ -37,7 +40,7 @@ export const checkLogInData = (req, res, next) => {
   const { value, err } = loginUserSchema(req.body);
 
   if (err)
-    throw HttpError(
+    throw new HttpError(
       401,
       'Invalid login data. Please ensure email and password are correct.',
       err,
@@ -55,12 +58,15 @@ export const protect = catchAsync(async (req, res, next) => {
   const userId = checkToken(token, process.env.ACCESS_SECRET_KEY);
 
   if (!userId)
-    throw HttpError(401, 'Unauthorized access. Please provide a valid token.');
+    throw new HttpError(
+      401,
+      'Unauthorized access. Please provide a valid token.',
+    );
 
   const currentUser = await getUserByIdService(userId);
 
   if (!currentUser)
-    throw HttpError(401, 'Unauthorized access. User not found.');
+    throw new HttpError(401, 'Unauthorized access. User not found.');
 
   req.user = currentUser;
   req.userId = userId;
@@ -71,7 +77,7 @@ export const checkUpdateUserData = (req, res, next) => {
   const { value, err } = updateUserValidator(req.body);
 
   if (err)
-    throw HttpError(
+    throw new HttpError(
       400,
       'Invalid user data. Please ensure all required fields are correctly filled.',
       err,
@@ -84,7 +90,7 @@ export const checkRefreshData = (req, res, next) => {
   const { value, err } = refreshUserValidator(req.body);
 
   if (err)
-    throw HttpError(
+    throw new HttpError(
       403,
       'Invalid or expired refresh token. Please log in again.',
       err,
@@ -98,12 +104,12 @@ export const refreshUserData = catchAsync(async (req, res, next) => {
 
   const userId = checkToken(refreshToken, process.env.REFRESH_SECRET_KEY);
 
-  if (!userId) throw HttpError(403, 'Invalid or expired refresh token.');
+  if (!userId) throw new HttpError(403, 'Invalid or expired refresh token.');
 
   const currentUser = await getUserByIdService(userId);
 
   if (!currentUser)
-    throw HttpError(403, 'User not found. Unable to refresh tokens.');
+    throw new HttpError(403, 'User not found. Unable to refresh tokens.');
 
   const newAccessToken = signToken(
     currentUser._id,

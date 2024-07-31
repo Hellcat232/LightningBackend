@@ -7,7 +7,7 @@ import { getWaterRecordIdService } from '../services/water.js';
 export const checkWaterDataMiddleware = (req, res, next) => {
   try {
     const { value, err } = checkWaterValidator(req.body);
-    if (err) throw HttpError(400, 'Bad Request', err);
+    if (err) throw new HttpError(400, 'Bad Request', err);
 
     console.log(value);
 
@@ -28,12 +28,12 @@ export const checkIdMiddleware = async (req, res, next) => {
   try {
     const { id } = req.params;
     const isIdValid = Types.ObjectId.isValid(id);
-    if (!isIdValid) throw HttpError(404, 'Not Found');
+    if (!isIdValid) throw new HttpError(404, 'Not Found');
 
     const waterRecord = await getWaterRecordIdService(id);
 
     if (!waterRecord || waterRecord.owner.toString() !== req.user.id)
-      throw HttpError(404, 'Not Found');
+      throw new HttpError(404, 'Not Found');
 
     req.water = waterRecord;
     next();

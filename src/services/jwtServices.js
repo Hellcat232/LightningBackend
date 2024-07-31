@@ -7,7 +7,7 @@ export const signToken = (userId, secretKey, expiresIn) => {
 
 export const checkToken = (token, key) => {
   if (!token) {
-    throw HttpError(401, 'Token is required');
+    throw new HttpError(401, 'Token is required');
   }
   try {
     // Пытаемся декодировать токен и извлечь идентификатор пользователя
@@ -15,12 +15,12 @@ export const checkToken = (token, key) => {
     const userId = decoded.userId;
 
     if (!userId) {
-      throw HttpError(401, 'Invalid token payload');
+      throw new HttpError(401, 'Invalid token payload');
     }
 
     return userId;
   } catch (err) {
     console.error('Token verification error:', err);
-    throw HttpError(401, 'Unauthorized');
+    throw new HttpError(401, 'Unauthorized');
   }
 };
