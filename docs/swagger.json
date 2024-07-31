@@ -42,10 +42,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "Jon Doe"
-                  },
                   "email": {
                     "type": "string",
                     "format": "email",
@@ -427,70 +423,6 @@
       }
     },
     "/water/day/{id}": {
-      "put": {
-        "tags": ["Water"],
-        "summary": "Update a water record by ID",
-        "operationId": "putDayWater",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "waterValue": {
-                    "type": "number",
-                    "example": 500
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "msg": {
-                      "type": "string",
-                      "example": "UPDATED!"
-                    },
-                    "waterRecord": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/water"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      },
       "patch": {
         "tags": ["Water"],
         "summary": "Partially update a water record by ID",

@@ -1,3 +1,12 @@
+class HttpError extends Error {
+  constructor(status, message) {
+    super(message || messageList[status]);
+    this.status = status;
+    this.name = this.constructor.name; // Устанавливаем имя ошибки
+    Error.captureStackTrace(this, this.constructor); // Сохраняем стек вызовов11
+  }
+}
+
 const messageList = {
   400: 'Bad Request',
   401: 'Unauthorized',
