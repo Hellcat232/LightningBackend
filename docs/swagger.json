@@ -31,9 +31,7 @@
   "paths": {
     "/users/register": {
       "post": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "Register user",
         "operationId": "registerUser",
         "description": "Register user with this endpoint",
@@ -69,10 +67,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "user"
-                  ],
+                  "required": ["status", "user"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -101,9 +96,7 @@
     },
     "/users/login": {
       "post": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "Login user",
         "operationId": "loginUser",
         "description": "Login with this endpoint",
@@ -135,12 +128,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "user",
-                    "accessToken",
-                    "refreshToken"
-                  ],
+                  "required": ["status", "user", "accessToken", "refreshToken"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -171,9 +159,7 @@
     },
     "/users/logout": {
       "post": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "Logout user",
         "operationId": "logoutUser",
         "description": "Logout the authenticated user",
@@ -197,9 +183,7 @@
     },
     "/users/update": {
       "patch": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "Update user information",
         "operationId": "updateUser",
         "description": "Update user with this endpoint",
@@ -225,19 +209,8 @@
                   },
                   "gender": {
                     "type": "string",
-                    "enum": [
-<<<<<<< HEAD
-                      "woman",
-                      "man"
-                    ],
+                    "enum": ["woman", "man"],
                     "example": "woman"
-=======
-                      "female",
-                      "male",
-                      "woman"
-                    ],
-                    "example": "male"
->>>>>>> parent of 738259a (Merge branch 'main' into pr/38)
                   },
                   "avatar": {
                     "type": "string",
@@ -266,10 +239,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "user"
-                  ],
+                  "required": ["status", "user"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -295,9 +265,7 @@
     },
     "/users/refresh": {
       "post": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "Refresh user's tokens",
         "operationId": "refreshUser",
         "description": "Refresh access and refresh tokens",
@@ -311,9 +279,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "refreshToken"
-                ],
+                "required": ["refreshToken"],
                 "properties": {
                   "refreshToken": {
                     "type": "string",
@@ -331,11 +297,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "accessToken",
-                    "refreshToken",
-                    "user"
-                  ],
+                  "required": ["accessToken", "refreshToken", "user"],
                   "properties": {
                     "accessToken": {
                       "type": "string",
@@ -372,9 +334,7 @@
     },
     "/users/current": {
       "get": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "Get current user",
         "operationId": "getCurrentUser",
         "description": "Get details of the currently authenticated user",
@@ -390,9 +350,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "user"
-                  ],
+                  "required": ["user"],
                   "properties": {
                     "user": {
                       "type": "object",
@@ -414,9 +372,7 @@
     },
     "/water/day": {
       "post": {
-        "tags": [
-          "Water"
-        ],
+        "tags": ["Water"],
         "summary": "Add a water record",
         "operationId": "postDayWater",
         "security": [
@@ -472,9 +428,7 @@
     },
     "/water/day/{id}": {
       "put": {
-        "tags": [
-          "Water"
-        ],
+        "tags": ["Water"],
         "summary": "Update a water record by ID",
         "operationId": "putDayWater",
         "security": [
@@ -538,9 +492,7 @@
         }
       },
       "patch": {
-        "tags": [
-          "Water"
-        ],
+        "tags": ["Water"],
         "summary": "Partially update a water record by ID",
         "operationId": "patchDayWater",
         "security": [
@@ -604,9 +556,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Water"
-        ],
+        "tags": ["Water"],
         "summary": "Delete a water record by ID",
         "operationId": "deleteDayWater",
         "security": [
@@ -656,9 +606,7 @@
     },
     "/water/fullDay": {
       "get": {
-        "tags": [
-          "Water"
-        ],
+        "tags": ["Water"],
         "summary": "Get daily water records",
         "operationId": "getFullDayWater",
         "security": [
@@ -760,9 +708,7 @@
     },
     "/water/fullMonth": {
       "get": {
-        "tags": [
-          "Water"
-        ],
+        "tags": ["Water"],
         "summary": "Get monthly water records",
         "operationId": "getFullMonthWater",
         "security": [
@@ -777,11 +723,7 @@
             "required": true,
             "schema": {
               "type": "string",
-<<<<<<< HEAD
               "example": "05.2024"
-=======
-              "example": "2024-07-24"
->>>>>>> parent of 738259a (Merge branch 'main' into pr/38)
             }
           }
         ],
@@ -871,10 +813,7 @@
     "schemas": {
       "user": {
         "type": "object",
-        "required": [
-          "name",
-          "email"
-        ],
+        "required": ["name", "email"],
         "properties": {
           "name": {
             "type": "string",
@@ -887,18 +826,8 @@
           },
           "gender": {
             "type": "string",
-            "enum": [
-<<<<<<< HEAD
-              "woman",
-              "man"
-            ],
+            "enum": ["woman", "man"],
             "example": "woman"
-=======
-              "Male",
-              "Female"
-            ],
-            "example": "Male"
->>>>>>> parent of 738259a (Merge branch 'main' into pr/38)
           },
           "avatar": {
             "type": "string"
@@ -919,7 +848,6 @@
       "water": {
         "type": "object",
         "required": [
-<<<<<<< HEAD
           "_id",
           "email",
           "name",
@@ -937,17 +865,11 @@
             "example": "koji221111222112619@cutxsew.com"
           },
           "accessToken": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "example": null
           },
           "refreshToken": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "example": null
           },
           "name": {
@@ -955,31 +877,19 @@
             "example": "Ko333"
           },
           "gender": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "example": null
           },
           "avatar": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "example": null
           },
           "weight": {
-            "type": [
-              "number",
-              "null"
-            ],
+            "type": ["number", "null"],
             "example": null
           },
           "sportsActivity": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "example": null
           },
           "waterRate": {
@@ -1003,8 +913,6 @@
         "required": [
           "_id",
           "localMonth",
-=======
->>>>>>> parent of 738259a (Merge branch 'main' into pr/38)
           "localDate",
           "localTime",
           "waterValue",
@@ -1013,7 +921,6 @@
         "properties": {
           "_id": {
             "type": "string",
-<<<<<<< HEAD
             "example": "66a5012643030e5ea5cd37bf"
           },
           "localMonth": {
@@ -1039,17 +946,10 @@
       },
       "water": {
         "type": "object",
-        "required": [
-          "localDate",
-          "localTime",
-          "waterValue",
-          "owner"
-        ],
+        "required": ["localDate", "localTime", "waterValue", "owner"],
         "properties": {
           "_id": {
             "type": "string",
-=======
->>>>>>> parent of 738259a (Merge branch 'main' into pr/38)
             "example": "60d0fe4f5311236168a109ca"
           },
           "localMonth": {
@@ -1073,7 +973,6 @@
             "example": "60d0fe4f5311236168a109cb"
           }
         }
-<<<<<<< HEAD
       },
       "record": {
         "type": "object",
@@ -1116,9 +1015,7 @@
       },
       "waterRecordFullMonth": {
         "type": "object",
-        "required": [
-          "localDate"
-        ],
+        "required": ["localDate"],
         "properties": {
           "localDate": {
             "type": "string",
@@ -1143,8 +1040,6 @@
             "example": true
           }
         }
-=======
->>>>>>> parent of 738259a (Merge branch 'main' into pr/38)
       }
     }
   }
