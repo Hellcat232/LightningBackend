@@ -3,8 +3,7 @@ tags:
 summary: Login user
 operationId: loginUser
 description: "Login with this endpoint"
-security: 
-  - bearerAuth: []
+security: []
 requestBody: 
   content: 
     application/json:

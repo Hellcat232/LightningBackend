@@ -386,14 +386,6 @@
                   "waterValue": {
                     "type": "number",
                     "example": 250
-                  },
-                  "localDate": {
-                    "type": "string",
-                    "example": "23.05.2024"
-                  },
-                  "localTime": {
-                    "type": "string",
-                    "example": "14:30"
                   }
                 }
               }
@@ -413,7 +405,8 @@
                       "example": "CREATED!"
                     },
                     "waterRecord": {
-                      "$ref": "#/components/schemas/waterRecordAdd"
+                      "type": "object",
+                      "$ref": "#/components/schemas/water"
                     }
                   }
                 }
@@ -459,10 +452,6 @@
                   "waterValue": {
                     "type": "number",
                     "example": 600
-                  },
-                  "localTime": {
-                    "type": "string",
-                    "example": "14:30"
                   }
                 }
               }
@@ -564,7 +553,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "example": "27.07.2024"
+              "example": "2024-07-24"
             }
           }
         ],
@@ -682,15 +671,54 @@
                       "type": "string",
                       "example": "GETED!"
                     },
+                    "waterRecord": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "_id": {
+                              "type": "string",
+                              "example": "66a0d6dfbb254e5308c48e80"
+                            },
+                            "owner": {
+                              "type": "string",
+                              "example": "669fb9997871c8f7eeea3db4"
+                            },
+                            "localMonth": {
+                              "type": "string",
+                              "example": "07.2024"
+                            },
+                            "localDate": {
+                              "type": "string",
+                              "example": "24.07.2024"
+                            },
+                            "waterValue": {
+                              "type": "number",
+                              "example": 600
+                            },
+                            "localTime": {
+                              "type": "string",
+                              "example": "12:26"
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "example": "2024-07-24T10:26:39.165Z"
+                            },
+                            "updatedAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "example": "2024-07-24T10:29:15.693Z"
+                            }
+                          }
+                        }
+                      }
+                    },
                     "totalWaterDrunk": {
                       "type": "number",
-                      "example": 2700
-                    },
-                    "waterRecord": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/waterRecordFullMonth"
-                      }
+                      "example": 1800
                     }
                   }
                 }
@@ -749,7 +777,7 @@
           }
         }
       },
-      "owner": {
+      "water": {
         "type": "object",
         "required": [
           "_id",
@@ -862,7 +890,7 @@
           },
           "localDate": {
             "type": "string",
-            "example": "23.05.2024"
+            "example": "2024-07-24"
           },
           "localTime": {
             "type": "string",

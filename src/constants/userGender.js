@@ -1,4 +1,5 @@
 export const userGender = {
-  FEMALE: 'woman',
-  MALE: 'man',
+  FEMALE: 'female',
+  MALE: 'male',
+  WOMAN: 'woman', 
 };

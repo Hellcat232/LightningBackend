@@ -5,17 +5,13 @@ import {
   updateWaterRecordIdService,
   deleteWaterRecordIdService,
   getMonthWaterServiceForFront,
-  dateNormalizer,
 } from '../services/water.js';
 
+// Контроллер для добавления записи о воде
 export const addWaterController = async (req, res, next) => {
   try {
     console.log(req.body);
-    const normalizedDate = dateNormalizer(req.body.localDate);
-    const waterRecord = await addWaterService(
-      { ...req.body, localDate: normalizedDate },
-      req.user,
-    );
+    const waterRecord = await addWaterService(req.body, req.user);
 
     res.status(201).json({
       msg: 'CREATED!',
@@ -34,6 +30,7 @@ export const addWaterController = async (req, res, next) => {
   }
 };
 
+// Контроллер для удаления записи о воде
 export const deleteWaterController = async (req, res, next) => {
   try {
     const waterRecord = await deleteWaterRecordIdService(req.water.id);
@@ -54,13 +51,13 @@ export const deleteWaterController = async (req, res, next) => {
   }
 };
 
+// Контроллер для обновления записи о воде
 export const updateWaterController = async (req, res, next) => {
   try {
-    const normalizedDate = dateNormalizer(req.body.localDate);
-    const waterRecord = await updateWaterRecordIdService(req.water.id, {
-      ...req.body,
-      localDate: normalizedDate,
-    });
+    const waterRecord = await updateWaterRecordIdService(
+      req.water.id,
+      req.body,
+    );
 
     res.status(201).json({
       msg: 'UPDATED!',
@@ -78,96 +75,56 @@ export const updateWaterController = async (req, res, next) => {
   }
 };
 
+// Контроллер для получения дневных записей о воде
 export const getDayWaterController = async (req, res, next) => {
   try {
-    const normalizedDate = dateNormalizer(
-      req.query.localDate || req.body.localDate,
-    );
-    const waterRecord = await getDayWaterService(
-      { localDate: normalizedDate },
+    const { allWaterRecord, feasibility, completed } = await getDayWaterService(
+      req.body,
       req.user,
     );
 
     res.status(200).json({
       msg: 'GETED!',
-      ...waterRecord,
+      waterRate: {
+        feasibility,
+        completed,
+      },
+      waterRecord: allWaterRecord,
     });
   } catch (e) {
     next(e);
   }
 };
 
+// Контроллер для получения месячных записей о воде
 export const getMonthWaterController = async (req, res, next) => {
   try {
-    const normalizedDate = dateNormalizer(
-      req.query.localDate || req.body.localDate,
-    );
-    const waterRecord = await getMonthWaterService(
-      { localDate: normalizedDate },
-      req.user,
-    );
+    const allWaterRecord = await getMonthWaterService(req.body, req.user);
 
     res.status(200).json({
       msg: 'GETED!',
-      ...waterRecord,
+      waterRecord: allWaterRecord,
     });
   } catch (e) {
     next(e);
   }
 };
 
+// Контроллер для получения месячных записей о воде для фронтенда
 export const getMonthWaterForFrontController = async (req, res, next) => {
   try {
     const owner = req.user;
-    const date = req.body.localDate || req.query.localDate;
-    if (!date) {
-      throw new Error('localDate is required');
-    }
+    const date = req.body;
 
     const { sortedResult, totalWaterDrunk } =
-      await getMonthWaterServiceForFront({ localDate: date }, owner);
+      await getMonthWaterServiceForFront(date, owner);
 
     res.status(200).json({
-      msg: 'GETED!',
+      msg: 'Monthly water data retrieved!',
+      waterRecord: sortedResult,
       totalWaterDrunk,
-      sortedResult,
     });
   } catch (e) {
-    console.error('Error in getMonthWaterForFrontController:', e);
-    next(e);
-  }
-};
-
-
-
-export const getFullWaterController = async (req, res, next) => {
-  try {
-    const owner = req.user;
-    const date = req.query.localDate || req.body.localDate;
-    if (!date) {
-      throw new Error('localDate is required');
-    }
-
-    const normalizedDate = dateNormalizer(date);
-
-    const dayWaterData = await getDayWaterService(
-      { localDate: normalizedDate },
-      owner,
-    );
-
-    const { sortedResult, totalWaterDrunk } =
-      await getMonthWaterServiceForFront({ localDate: normalizedDate }, owner);
-
-    res.status(200).json({
-      msg: 'GETED!',
-      dayWaterData,
-      monthWaterData: {
-        sortedResult,
-        totalWaterDrunk,
-      },
-    });
-  } catch (e) {
-    console.error('Error in getFullWaterController:', e);
     next(e);
   }
 };

@@ -7,30 +7,19 @@ required:
 properties:
   _id:
     type: string
-    example: '60d0fe4f5311236168a109ca'
+    example: "60d0fe4f5311236168a109ca"
   localMonth:
     type: string
-    example: '07-2024'
+    example: "07-2024"
   localDate:
     type: string
-    example: '23.05.2024'
+    example: "2024-07-24"
   localTime:
     type: string
-    example: '14:30'
+    example: "14:30"
   waterValue:
     type: number
     example: 250
   owner:
     type: string
-    example: '60d0fe4f5311236168a109cb'
-#  type: object
-#     required:
-#       - localDate
-#       - localTime
-#     properties:
-#       localDate:
-#         type: string
-#         example: '23/05/2024'
-#       localTime:
-#         type: string
-#         example: '14:30'
+    example: "60d0fe4f5311236168a109cb"
