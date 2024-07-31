@@ -29,19 +29,74 @@
     }
   ],
   "paths": {
-    "/user/login": {
+    "/users/register": {
       "post": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
+        "summary": "Register user",
+        "operationId": "registerUser",
+        "description": "Register user with this endpoint",
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "userExample@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "f12345678"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created user!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "user"],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 201
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "example": "userExample@gmail.com"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body"
+          }
+        }
+      }
+    },
+    "/users/login": {
+      "post": {
+        "tags": ["User"],
         "summary": "Login user",
         "operationId": "loginUser",
         "description": "Login with this endpoint",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
@@ -69,12 +124,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "user",
-                    "accessToken",
-                    "refreshToken"
-                  ],
+                  "required": ["status", "user", "accessToken", "refreshToken"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -103,53 +153,9 @@
         }
       }
     },
-    "/user/current": {
-      "get": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Get current user",
-        "operationId": "getCurrentUser",
-        "description": "Get details of the currently authenticated user",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "user"
-                  ],
-                  "properties": {
-                    "user": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/user"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized error"
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
-      }
-    },
-    "/user/logout": {
+    "/users/logout": {
       "post": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "Logout user",
         "operationId": "logoutUser",
         "description": "Logout the authenticated user",
@@ -171,11 +177,91 @@
         }
       }
     },
-    "/user/refresh": {
-      "post": {
-        "tags": [
-          "User"
+    "/users/update": {
+      "patch": {
+        "tags": ["User"],
+        "summary": "Update user information",
+        "operationId": "updateUser",
+        "description": "Update user with this endpoint",
+        "security": [
+          {
+            "bearerAuth": []
+          }
         ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "userExample@gmail.com"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": ["woman", "man"],
+                    "example": "woman"
+                  },
+                  "avatar": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "weight": {
+                    "type": "string",
+                    "example": "70"
+                  },
+                  "sportsActivity": {
+                    "type": "string"
+                  },
+                  "waterRate": {
+                    "type": "string",
+                    "example": "1.5"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful update operation!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "user"],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "user": {
+                      "type": "object",
+                      "$ref": "#/components/schemas/user"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body"
+          },
+          "401": {
+            "description": "Unauthorized error"
+          }
+        }
+      }
+    },
+    "/users/refresh": {
+      "post": {
+        "tags": ["User"],
         "summary": "Refresh user's tokens",
         "operationId": "refreshUser",
         "description": "Refresh access and refresh tokens",
@@ -189,9 +275,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "refreshToken"
-                ],
+                "required": ["refreshToken"],
                 "properties": {
                   "refreshToken": {
                     "type": "string",
@@ -209,11 +293,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "accessToken",
-                    "refreshToken",
-                    "user"
-                  ],
+                  "required": ["accessToken", "refreshToken", "user"],
                   "properties": {
                     "accessToken": {
                       "type": "string",
@@ -248,149 +328,26 @@
         }
       }
     },
-    "/user/register": {
-      "post": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Register user",
-        "operationId": "registerUser",
-        "description": "Register user with this endpoint",
+    "/users/current": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get current user",
+        "operationId": "getCurrentUser",
+        "description": "Get details of the currently authenticated user",
         "security": [
           {
             "bearerAuth": []
           }
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "example": "userExample@gmail.com"
-                  },
-                  "password": {
-                    "type": "string",
-                    "example": "f12345678"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Successfully created user!",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "status",
-                    "user"
-                  ],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 201
-                    },
-                    "user": {
-                      "type": "object",
-                      "properties": {
-                        "email": {
-                          "type": "string",
-                          "format": "email",
-                          "example": "userExample@gmail.com"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid request body"
-          }
-        }
-      }
-    },
-    "/user/update": {
-      "patch": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Update user information",
-        "operationId": "updateUser",
-        "description": "Update user with this endpoint",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "John Doe"
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "example": "userExample@gmail.com"
-                  },
-                  "gender": {
-                    "type": "string",
-                    "enum": [
-                      "female",
-                      "male",
-                      "woman"
-                    ],
-                    "example": "male"
-                  },
-                  "avatar": {
-                    "type": "string",
-                    "format": "binary"
-                  },
-                  "weight": {
-                    "type": "string",
-                    "example": "70"
-                  },
-                  "sportsActivity": {
-                    "type": "string"
-                  },
-                  "waterRate": {
-                    "type": "string",
-                    "example": "1.5"
-                  }
-                }
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
-            "description": "Successful update operation!",
+            "description": "Successful operation",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "user"
-                  ],
+                  "required": ["user"],
                   "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 200
-                    },
                     "user": {
                       "type": "object",
                       "$ref": "#/components/schemas/user"
@@ -400,20 +357,18 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request body"
-          },
           "401": {
             "description": "Unauthorized error"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
     },
     "/water/day": {
       "post": {
-        "tags": [
-          "Water"
-        ],
+        "tags": ["Water"],
         "summary": "Add a water record",
         "operationId": "postDayWater",
         "security": [
@@ -476,9 +431,7 @@
     },
     "/water/day/{id}": {
       "patch": {
-        "tags": [
-          "Water"
-        ],
+        "tags": ["Water"],
         "summary": "Partially update a water record by ID",
         "operationId": "patchDayWater",
         "security": [
@@ -546,9 +499,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Water"
-        ],
+        "tags": ["Water"],
         "summary": "Delete a water record by ID",
         "operationId": "deleteDayWater",
         "security": [
@@ -598,9 +549,7 @@
     },
     "/water/fullDay": {
       "get": {
-        "tags": [
-          "Water"
-        ],
+        "tags": ["Water"],
         "summary": "Get daily water records",
         "operationId": "getFullDayWater",
         "security": [
@@ -702,9 +651,7 @@
     },
     "/water/fullMonth": {
       "get": {
-        "tags": [
-          "Water"
-        ],
+        "tags": ["Water"],
         "summary": "Get monthly water records",
         "operationId": "getFullMonthWater",
         "security": [
@@ -719,7 +666,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "example": "25.05.2024"
+              "example": "05.2024"
             }
           }
         ],
@@ -770,10 +717,7 @@
     "schemas": {
       "user": {
         "type": "object",
-        "required": [
-          "name",
-          "email"
-        ],
+        "required": ["name", "email"],
         "properties": {
           "name": {
             "type": "string",
@@ -786,11 +730,8 @@
           },
           "gender": {
             "type": "string",
-            "enum": [
-              "Male",
-              "Female"
-            ],
-            "example": "Male"
+            "enum": ["woman", "man"],
+            "example": "woman"
           },
           "avatar": {
             "type": "string"
@@ -828,17 +769,11 @@
             "example": "koji221111222112619@cutxsew.com"
           },
           "accessToken": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "example": null
           },
           "refreshToken": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "example": null
           },
           "name": {
@@ -846,31 +781,19 @@
             "example": "Ko333"
           },
           "gender": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "example": null
           },
           "avatar": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "example": null
           },
           "weight": {
-            "type": [
-              "number",
-              "null"
-            ],
+            "type": ["number", "null"],
             "example": null
           },
           "sportsActivity": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "example": null
           },
           "waterRate": {
@@ -927,12 +850,7 @@
       },
       "water": {
         "type": "object",
-        "required": [
-          "localDate",
-          "localTime",
-          "waterValue",
-          "owner"
-        ],
+        "required": ["localDate", "localTime", "waterValue", "owner"],
         "properties": {
           "_id": {
             "type": "string",
@@ -1001,9 +919,7 @@
       },
       "waterRecordFullMonth": {
         "type": "object",
-        "required": [
-          "localDate"
-        ],
+        "required": ["localDate"],
         "properties": {
           "localDate": {
             "type": "string",

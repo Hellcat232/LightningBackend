@@ -18,29 +18,29 @@ servers:
   - url: http://localhost:3000
     description: Local development server
 paths:
-  /user/login:
+  /users/register:
     post:
-      $ref: ../swagger/paths/user/login/post.yaml
+      $ref: ../swagger/paths/users/register/post.yaml
 
-  /user/current:
+  /users/login:
     get:
-      $ref: ../swagger/paths/user/current/get.yaml
+      $ref: ../swagger/paths/users/login/get.yaml
 
-  /user/logout:
+  /users/logout:
     post:
-      $ref: ../swagger/paths/user/logout/post.yaml
+      $ref: ../swagger/paths/users/logout/post.yaml
 
-  /user/refresh:
+  /users/refresh:
     post:
-      $ref: ../swagger/paths/user/refresh/post.yaml
+      $ref: ../swagger/paths/users/refresh/post.yaml
 
-  /user/register:
+  /users/update:
     post:
-      $ref: ../swagger/paths/user/register/post.yaml
+      $ref: ../swagger/paths/users/update/post.yaml
 
-  /user/update:
+  /users/current:
     patch:
-      $ref: ../swagger/paths/user/update/patch.yaml
+      $ref: ../swagger/paths/users/current/patch.yaml
 
   /water/day:
     post:
