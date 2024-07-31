@@ -17,6 +17,18 @@ export const addWaterController = async (req, res, next) => {
       req.user,
     );
 
+    const owner = {
+      _id: waterRecord.owner._id,
+      email: waterRecord.owner.email,
+      name: waterRecord.owner.name,
+      avatar: waterRecord.owner.avatar,
+      weight: waterRecord.owner.weight,
+      sportsActivity: waterRecord.owner.sportsActivity,
+      waterRate: waterRecord.owner.waterRate,
+      createdAt: waterRecord.owner.createdAt,
+      updatedAt: waterRecord.owner.updatedAt,
+    };
+
     res.status(201).json({
       msg: 'CREATED!',
       waterRecord: {
@@ -25,7 +37,7 @@ export const addWaterController = async (req, res, next) => {
         localDate: waterRecord.localDate,
         localTime: waterRecord.localTime,
         waterValue: waterRecord.waterValue,
-        owner: waterRecord.owner,
+        owner,
       },
     });
   } catch (e) {
